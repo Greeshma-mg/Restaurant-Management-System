@@ -1,12 +1,11 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
-// ✅ Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-// ✅ Register User
+
 exports.registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -28,7 +27,6 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-// ✅ Login User
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -51,12 +49,12 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// ✅ Logout User
+
 exports.logoutUser = (req, res) => {
   res.json({ message: "Logged out successfully" });
 };
 
-// ✅ Get User Profile
+
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -67,7 +65,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// ✅ Check Admin Access
+
 exports.checkAdmin = async (req, res) => {
   res.json({ message: "Admin Access Granted" });
 };

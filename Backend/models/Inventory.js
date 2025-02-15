@@ -4,7 +4,7 @@ const inventorySchema = new mongoose.Schema(
   {
     itemName: { type: String, required: true },
     quantity: { type: Number, required: true },
-    unit: { type: String, required: true }, // e.g., kg, liters, pieces
+    unit: { type: String, required: true }, // e.g.ingrediants amount-----
     supplier: { type: mongoose.Schema.Types.ObjectId, ref: "Supplier" },
   },
   { timestamps: true }
