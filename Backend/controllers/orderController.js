@@ -1,6 +1,4 @@
 const Order = require("../models/Order");
-
-// ✅ Get All Orders
 exports.getOrders = async (req, res) => {
   try {
     const orders = await Order.find().populate("customer", "name email");
@@ -10,20 +8,18 @@ exports.getOrders = async (req, res) => {
   }
 };
 
-// ✅ Create Order
 exports.createOrder = async (req, res) => {
   try {
-    console.log("🔥 Received Order Request:", req.body);
+    console.log(" Received Order Request:", req.body);
     
     let { customer, items, totalAmount, status } = req.body;
 
-    // ✅ Validate required fields
+    
     if (!customer || !items || items.length === 0 || !totalAmount || !status) {
-      console.log("❌ Missing fields in request body");
+      console.log(" Missing fields in request body");
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // ✅ Convert `customer` to ObjectId
     const mongoose = require("mongoose");
     if (!mongoose.Types.ObjectId.isValid(customer)) {
       return res.status(400).json({ message: "Invalid customer ID" });
@@ -37,16 +33,16 @@ exports.createOrder = async (req, res) => {
     });
 
     const savedOrder = await newOrder.save();
-    console.log("✅ Order Saved:", savedOrder);
+    console.log(" Order Saved:", savedOrder);
 
     res.status(201).json(savedOrder);
   } catch (error) {
-    console.error("❌ Error in createOrder:", error);
+    console.error(" Error in createOrder:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-// ✅ Get Order by ID
+
 exports.getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("customer", "name email");
@@ -57,7 +53,6 @@ exports.getOrderById = async (req, res) => {
   }
 };
 
-// ✅ Update Order
 exports.updateOrder = async (req, res) => {
   try {
     const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -68,7 +63,7 @@ exports.updateOrder = async (req, res) => {
   }
 };
 
-// ✅ Delete Order
+
 exports.deleteOrder = async (req, res) => {
   try {
     const deletedOrder = await Order.findByIdAndDelete(req.params.id);
@@ -79,7 +74,7 @@ exports.deleteOrder = async (req, res) => {
   }
 };
 
-// ✅ Update Order Status
+
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;

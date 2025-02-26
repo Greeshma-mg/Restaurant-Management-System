@@ -1,6 +1,4 @@
-const Reservation = require("../models/Reservation"); // ✅ Ensure the model is imported
-
-// ✅ Get all reservations
+const Reservation = require("../models/Reservation");
 exports.getReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find().populate("customer", "name email");
@@ -11,7 +9,6 @@ exports.getReservations = async (req, res) => {
   }
 };
 
-// ✅ Get a single reservation by ID
 exports.getReservationById = async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.id);
@@ -25,7 +22,7 @@ exports.getReservationById = async (req, res) => {
   }
 };
 
-// ✅ Create a reservation
+
 exports.createReservation = async (req, res) => {
   try {
     const reservation = new Reservation(req.body);
@@ -36,8 +33,6 @@ exports.createReservation = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-// ✅ Update a reservation
 exports.updateReservation = async (req, res) => {
   try {
     const { id } = req.params;
@@ -52,7 +47,6 @@ exports.updateReservation = async (req, res) => {
   }
 };
 
-// ✅ Delete a reservation
 exports.deleteReservation = async (req, res) => {
   try {
     const { id } = req.params;
