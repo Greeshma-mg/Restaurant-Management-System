@@ -4,13 +4,13 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 dotenv.config();
-
 const userRoutes = require("./routes/userRoutes");
 const menuRoutes = require("./routes/menuRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const reservationRoutes = require("./routes/reservationRoutes");
-const paymentRoutes = require("./routes/paymentRoutes")
+const paymentRoutes = require("./routes/paymentRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const restaurantRoutes = require("./routes/restaurantRoutes");
 
 const app = express();
 
@@ -36,6 +36,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/restaurants", restaurantRoutes);
 app.get("/", (req, res) => {
     res.send("Welcome to RestaurantPro API");
 });
