@@ -1,0 +1,247 @@
+
+.reservations-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: "Arial", sans-serif;
+  }
+  
+  .page-title {
+    text-align: center;
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .success-message {
+    padding: 12px;
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  
+  .reservations-actions {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .new-reservation-button {
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .new-reservation-button:hover {
+    background: #e68900;
+  }
+  
+
+  .reservation-form-container {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .reservation-form h2 {
+    text-align: center;
+    color: #444;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .form-row .form-group {
+    flex: 1;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .submit-button {
+    background: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .submit-button:hover {
+    background: #43a047;
+  }
+  
+  .cancel-button {
+    background: #ccc;
+    color: #333;
+    padding: 10px 15px;
+    border: none;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .cancel-button:hover {
+    background: #bbb;
+  }
+  
+  .reservations-list h2 {
+    text-align: center;
+    color: #444;
+    margin-bottom: 10px;
+  }
+  
+  .no-reservations {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+    padding: 10px;
+  }
+  
+  .reservation-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .reservation-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-left: 6px solid #2196f3;
+  }
+  
+  .reservation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .reservation-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .status-badge {
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  
+  .status-badge.confirmed {
+    background: #4caf50;
+  }
+  
+  .status-badge.pending {
+    background: #ff9800;
+  }
+  
+  .reservation-details {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .reservation-details p {
+    margin: 4px 0;
+  }
+  
+  
+  .reservation-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .view-details-button,
+  .cancel-reservation-button {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+  }
+  
+  .view-details-button {
+    background: #2196f3;
+    color: white;
+  }
+  
+  .view-details-button:hover {
+    background: #1976d2;
+  }
+  
+  .cancel-reservation-button {
+    background: #f44336;
+    color: white;
+  }
+  
+  .cancel-reservation-button:hover {
+    background: #d32f2f;
+  }
+  @media (max-width: 600px) {
+    .form-row {
+      flex-direction: column;
+    }
+  
+    .reservation-card {
+      border-left-width: 4px;
+    }
+  
+    .reservation-header h3 {
+      font-size: 16px;
+    }
+  
+    .status-badge {
+      font-size: 12px;
+    }
+  
+    .reservation-actions {
+      flex-direction: column;
+    }
+  }
+  

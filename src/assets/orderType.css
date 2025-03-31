@@ -1,0 +1,71 @@
+/* Order Type Selection - Styling */
+.order-type-container {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.order-type-container h1 {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* Options Container */
+.order-options {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+/* Individual Order Option */
+.order-option {
+  width: 250px;
+  padding: 20px;
+  border-radius: 12px;
+  background: white;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: 2px solid #ddd;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.order-option:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  border-color: #ff5722;
+}
+
+.order-option img {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 15px;
+}
+
+.order-option h2 {
+  font-size: 22px;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.order-option p {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-options {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .order-option {
+    width: 80%;
+  }
+}

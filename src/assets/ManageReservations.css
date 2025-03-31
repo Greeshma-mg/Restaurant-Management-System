@@ -1,0 +1,145 @@
+.manage-reservations {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .navigation {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .nav-btn {
+    padding: 8px 15px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+  
+  .controls {
+    margin-bottom: 20px;
+  }
+  
+  .filter-tabs {
+    display: flex;
+    margin-bottom: 15px;
+  }
+  
+  .filter-tabs button {
+    padding: 8px 15px;
+    background: #f1f1f1;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .filter-tabs button.active {
+    background: #3498db;
+    color: white;
+  }
+  
+  .search-add {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .search-container input {
+    padding: 8px;
+    width: 250px;
+  }
+  
+  .add-btn, .search-btn {
+    padding: 8px 15px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .status-confirmed { background-color: #e8f8f5; }
+  .status-pending { background-color: #fef9e7; }
+  .status-completed { background-color: #eafaf1; }
+  .status-cancelled { background-color: #fdedec; }
+  
+  .actions button {
+    margin-right: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .edit-btn { background: #f39c12; color: white; border: none; }
+  .delete-btn { background: #e74c3c; color: white; border: none; }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal {
+    background: white;
+    padding: 20px;
+    width: 500px;
+    max-width: 90%;
+    border-radius: 4px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 8px;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .save-btn {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+  }

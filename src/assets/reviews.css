@@ -1,0 +1,145 @@
+
+.reviews-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.reviews-container h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  transition: transform 0.2s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.review-header h3 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.rating {
+  color: #ffc107;
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+.date {
+  font-size: 14px;
+  color: #777;
+  margin: 0;
+}
+
+
+.review-text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+
+.review-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.review-status:contains("Pending") {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+
+.review-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.review-actions button {
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.review-actions button:first-child {
+  background-color: #4caf50;
+  color: white;
+}
+
+.review-actions button:first-child:hover {
+  background-color: #388e3c;
+}
+
+.review-actions button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+.review-actions button:last-child:hover {
+  background-color: #d32f2f;
+}
+
+
+.reviews-container > div:first-child:not(.reviews-list) {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .review-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .review-actions button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,40 @@
+
+.reviews-container {
+  padding: 24px;
+}
+
+.reviews-table {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.reviews-table th {
+  background-color: #f3f4f6;
+  padding: 12px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.reviews-table td {
+  padding: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.reviews-table tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.delete-btn {
+  background-color: #ef4444;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: background 0.3s ease-in-out;
+}
+
+.delete-btn:hover {
+  background-color: #dc2626;
+}

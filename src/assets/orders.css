@@ -1,0 +1,114 @@
+/* assets/orders.css */
+.orders-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .orders-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .orders-title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .back-button {
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .empty-orders {
+    text-align: center;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .order-button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .orders-list {
+    display: grid;
+    gap: 15px;
+  }
+  
+  .order-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+  }
+  
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .order-id {
+    font-weight: bold;
+  }
+  
+  .order-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+  
+  .order-status.processing { background-color: #fff0c2; }
+  .order-status.completed { background-color: #c6f6d5; }
+  .order-status.delivered { background-color: #c7d2fe; }
+  .order-status.cancelled { background-color: #fee2e2; }
+  
+  .order-date {
+    color: #666;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  
+  .order-items ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .order-items li {
+    padding: 5px 0;
+    border-bottom: 1px dashed #eee;
+  }
+  
+  .order-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+  }
+  
+  .reorder-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
