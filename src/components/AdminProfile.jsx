@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import "../assets/Profile.css";
+import "../assets/profile.css";
 
 const AdminProfile = () => {
   const navigate = useNavigate();
