@@ -1,5 +1,9 @@
 import axios from "axios";
-const API = axios.create({ baseURL: "http://localhost:5000/api" });
+
+// Dynamically use backend URL from environment or fallback to localhost for development
+const API = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+});
 
 API.interceptors.request.use((req) => {
   try {
@@ -15,12 +19,11 @@ API.interceptors.request.use((req) => {
 
 const fetchMenuItems = async () => {
   try {
-    const response = await API.get("/menu", { withCredentials: true });
+    const response = await API.get("/menu");
     console.log("✅ Menu Items:", response.data);
   } catch (error) {
     console.error("❌ Error fetching menu:", error.response ? error.response.data : error.message);
   }
 };
-
 
 export default API;

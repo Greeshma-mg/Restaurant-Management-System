@@ -6,6 +6,12 @@ import aboutImage from "/images/about.jpg";
 import chefImage from "/images/chef.jpg";
 import chef1Image from "/images/chef1.jpg";
 import chef2Image from "/images/chef2.jpg";
+import cravingImage from "/images/craving.jpg"; 
+import pastaImage from "/images/pasta.jpg";
+import salmon1Image from "/images/salmon1.jpg";
+import dessertImage from "/images/dessert.jpg";
+import biriyaniImage from "/images/biriyani.jpg";
+import chicken1Image from "/images/chicken1.jpg";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,8 +42,6 @@ const Home = () => {
     }
   }
 
-  const placeholderImage = "/api/placeholder/400/300";
-
   // Admin View
   if (user && user.role === "admin") {
     return <AdminHome />;
@@ -48,12 +52,9 @@ const Home = () => {
     return (
       <div className="home-container">
         <h1>Welcome to Savory Elegance</h1>
-        <div className="video-container">
-          <video autoPlay muted loop className="background-video">
-            <source src="/videos/menu1.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div className="video-overlay">
+        <div className="image-container">
+          <img src={cravingImage} alt="Restaurant Banner" className="background-image" />
+          <div className="image-overlay">
             <h1>THE COMFORT YOU CRAVE</h1>
             <button onClick={handleOrderTypeNavigation} className="cta-button">ORDER NOW</button>
           </div>
@@ -81,18 +82,15 @@ const Home = () => {
           <h2>Today's Specials</h2>
           <div className="featured-items">
             {[
-              { name: "Signature Pasta", description: "Our house specialty", price: "$14.99", videoSrc: "/videos/pasta.mp4" },
-              { name: "Grilled Salmon", description: "Fresh Atlantic salmon", price: "$18.99", videoSrc: "/videos/salmon.mp4" },
-              { name: "Chef's Dessert", description: "Surprise dessert daily", price: "$8.99", videoSrc: "/videos/dessert.mp4" },
-              { name: "Chef's Biriyani", description: "Aromatic rice dish", price: "$13.99", videoSrc: "/videos/biriyani.mp4" },
-              { name: "Chicken Grill", description: "Juicy, smoky chicken", price: "$18.99", videoSrc: "/videos/chicken.mp4" },
+              { name: "Signature Pasta", description: "Our house specialty", price: "$14.99", imageSrc: pastaImage },
+              { name: "Grilled Salmon", description: "Fresh Atlantic salmon", price: "$18.99", imageSrc: salmon1Image },
+              { name: "Chef's Dessert", description: "Surprise dessert daily", price: "$8.99", imageSrc: dessertImage },
+              { name: "Chef's Biriyani", description: "Aromatic rice dish", price: "$13.99", imageSrc: biriyaniImage },
+              { name: "Chicken Grill", description: "Juicy, smoky chicken", price: "$18.99", imageSrc: chicken1Image },
             ].map((item, index) => (
               <div className="featured-item" key={index}>
-                <div className="item-video">
-                  <video autoPlay loop muted>
-                    <source src={item.videoSrc} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+                <div className="item-image">
+                  <img src={item.imageSrc} alt={item.name} />
                 </div>
                 <h3>{item.name}</h3>
                 <p>{item.description}</p>
@@ -162,12 +160,9 @@ const Home = () => {
   // Guest View (Not Logged In)
   return (
     <div className="home-container">
-      <div className="video-container">
-        <video autoPlay muted loop className="background-video">
-          <source src="/videos/video1.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div className="video-overlay">
+      <div className="image-container">
+        <img src={bannerImage} alt="Restaurant Banner" className="background-image" />
+        <div className="image-overlay">
           <h1>THE COMFORT YOU CRAVE</h1>
           <button onClick={handleOrderTypeNavigation} className="cta-button">ORDER NOW</button>
         </div>

@@ -611,19 +611,19 @@ const Menu = () => {
   // Main menu view
   return (
     <div className="menu-container">
-      {/* Cover Video Section - Added at the top of the main menu view */}
-      <div className="cover-video-container">
-        <video 
-          className="cover-video" 
-          autoPlay 
-          loop 
-          muted 
-          playsInline
-        >
-          <source src="/videos/menucover.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div className="video-overlay">
+      {/* Cover Image Section - Replaced video with static image */}
+      <div className="cover-image-container">
+        <img 
+          className="cover-image" 
+          src="/images/menu.jpg" 
+          alt="Savory Elegance Cover" 
+          onError={(e) => {
+            console.error("Failed to load cover image");
+            e.target.src = generalFallbackImage;
+            e.target.onerror = null;
+          }}
+        />
+        <div className="image-overlay">
           <h1>Savory Elegance</h1>
           <p>Experience culinary excellence</p>
         </div>
