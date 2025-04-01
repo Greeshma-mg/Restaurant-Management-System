@@ -161,7 +161,7 @@ const Home = () => {
   return (
     <div className="home-container">
       <div className="image-container">
-        <img src={bannerImage} alt="Restaurant Banner" className="background-image" />
+        <img src={cravingImage} alt="Restaurant Banner" className="background-image" />
         <div className="image-overlay">
           <h1>THE COMFORT YOU CRAVE</h1>
           <button onClick={handleOrderTypeNavigation} className="cta-button">ORDER NOW</button>
