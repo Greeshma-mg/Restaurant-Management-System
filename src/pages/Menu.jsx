@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Reservation from "../components/Reservation";
-import Payment from "../components/Payment";
+import Payment from "../components/payment";
 import Footer from "../components/Footer";
 import "../assets/menu.css";
 import { MenuService, OrderService } from "../utils/api";
