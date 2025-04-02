@@ -71,30 +71,80 @@ const Home = () => {
         <img src={images.about} alt="About Us" />
       </div>
 
-      {/* Featured Dishes */}
+      {/* Featured Section */}
       <div className="featured-section">
         <h2>Today's Specials</h2>
         <div className="featured-items">
           {[
-            { name: "Signature Pasta", price: "$14.99", image: images.pasta },
-            { name: "Grilled Salmon", price: "$18.99", image: images.salmon },
-            { name: "Chef's Dessert", price: "$8.99", image: images.dessert },
-            { name: "Biriyani", price: "$13.99", image: images.biriyani },
-            { name: "Chicken Grill", price: "$18.99", image: images.chicken },
+            { name: "Signature Pasta", description: "Our house specialty", price: "$14.99", imageSrc: images.pasta },
+            { name: "Grilled Salmon", description: "Fresh Atlantic salmon", price: "$18.99", imageSrc: images.salmon },
+            { name: "Chef's Dessert", description: "Surprise dessert daily", price: "$8.99", imageSrc: images.dessert },
+            { name: "Chef's Biriyani", description: "Aromatic rice dish", price: "$13.99", imageSrc: images.biriyani },
+            { name: "Chicken Grill", description: "Juicy, smoky chicken", price: "$18.99", imageSrc: images.chicken },
           ].map((item, index) => (
-            <div key={index} className="featured-item">
-              <img src={item.image} alt={item.name} />
+            <div className="featured-item" key={index}>
+              <div className="item-image">
+                <img src={item.imageSrc} alt={item.name} />
+              </div>
               <h3>{item.name}</h3>
+              <p>{item.description}</p>
               <span className="price">{item.price}</span>
             </div>
           ))}
         </div>
       </div>
 
+      {/* Call to Action Section */}
+      <div className="cta-section">
+        <button onClick={handleOrderTypeNavigation} className="cta-button">Browse Menu</button>
+        <button onClick={() => navigate("/reservations")} className="cta-button secondary">Make a Reservation</button>
+      </div>
+
+      {/* Chefs Section */}
+      <div className="chefs-section">
+        <h2>Meet Our Culinary Team</h2>
+        <div className="chefs-container">
+          {[
+            { name: "Chef Maria", title: "Executive Chef", bio: "15 years in fine dining", image: images.chef },
+            { name: "Chef James", title: "Sous Chef", bio: "Fusion cuisine expert", image: images.chef1 },
+            { name: "Chef Sarah", title: "Pastry Chef", bio: "Award-winning pastry artist", image: images.chef2 },
+          ].map((chef, index) => (
+            <div className="chef-card" key={index}>
+              <div className="chef-image">
+                <img src={chef.image} alt={chef.name} />
+              </div>
+              <h3>{chef.name}</h3>
+              <h4>{chef.title}</h4>
+              <p>{chef.bio}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Reviews Section */}
-      <div className="reviews-section">
+      <div className="reviews-section" id="reviews">
         <h2>What Our Customers Say</h2>
-        <button onClick={(e) => handleReviewsNavigation(e)} className="view-all-button">
+        <div className="reviews-container">
+          {[
+            { name: "Emily T.", rating: 5, comment: "Best dining experience!", date: "Feb 15, 2025" },
+            { name: "Michael R.", rating: 4, comment: "Great service & atmosphere.", date: "Jan 28, 2025" },
+            { name: "Sophia L.", rating: 5, comment: "Perfect from appetizers to dessert!", date: "Mar 5, 2025" },
+          ].map((review, index) => (
+            <div className="review-card" key={index}>
+              <div className="review-header">
+                <h3>{review.name}</h3>
+                <div className="rating">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <span key={i} className="star">★</span>
+                  ))}
+                </div>
+              </div>
+              <p className="review-comment">"{review.comment}"</p>
+              <p className="review-date">{review.date}</p>
+            </div>
+          ))}
+        </div>
+        <button onClick={handleReviewsNavigation} className="view-all-button">
           {user ? "View All Reviews" : "Sign In to View Reviews"}
         </button>
       </div>
