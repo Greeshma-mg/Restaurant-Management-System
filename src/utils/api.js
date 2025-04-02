@@ -1,19 +1,44 @@
 import axios from 'axios';
+
+// ✅ Set API base URL (from .env or default to localhost)
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+console.log("✅ API Base URL:", API_BASE_URL);  // Debugging
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api', 
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-
+// ✅ Interceptor to add Authorization header
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
+
+  console.log("🔑 Token:", token); // Debugging
+
   if (token && token !== "null") {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+// ✅ Handle API errors
+const handleError = (error) => {
+  if (error.response) {
+    console.error(`❌ API Error (${error.response.status}):`, error.response.data);
+    return Promise.reject(error.response.data);
+  } else if (error.request) {
+    console.error("❌ No response from server:", error.request);
+    return Promise.reject({ message: "Server did not respond" });
+  } else {
+    console.error("❌ Request Error:", error.message);
+    return Promise.reject({ message: error.message });
+  }
+};
+
+// ✅ Menu API
 export const MenuService = {
   getAllMenus: async () => {
     try {
@@ -31,7 +56,6 @@ export const MenuService = {
       return handleError(error);
     }
   },
-
   getItemsByCategory: async (category) => {
     if (!category) return Promise.reject({ message: "Category is required" });
 
@@ -44,13 +68,13 @@ export const MenuService = {
       return handleError(error);
     }
   },
-
   createMenu: (menuData) => API.post('/menu', menuData),
   updateMenu: (id, menuData) => API.put(`/menu/${id}`, menuData),
   deleteMenu: (id) => API.delete(`/menu/${id}`),
   getItem: (id) => API.get(`/menu/item/${id}`),
 };
 
+// ✅ Orders API
 export const OrderService = {
   getAllOrders: () => API.get('/orders'),
   getOrderById: (id) => API.get(`/orders/${id}`),
@@ -60,7 +84,7 @@ export const OrderService = {
   getOrderHistory: () => API.get('/orders/history'),
 };
 
-// ✅ Define API methods for Reservations
+// ✅ Reservations API
 export const ReservationService = {
   getAllReservations: () => API.get('/reservations'),
   getReservationById: (id) => API.get(`/reservations/${id}`),
@@ -70,25 +94,25 @@ export const ReservationService = {
   getAvailableTimes: (date) => API.get('/reservations/available', { params: { date } }),
 };
 
-// ✅ Define API methods for Payments
+// ✅ Payments API
 export const PaymentService = {
   getAllPayments: () => API.get('/payments'),
   getPaymentById: (id) => API.get(`/payments/${id}`),
   createPayment: (paymentData) => API.post('/payments', paymentData),
-  updatePayment: (id, paymentData) => API.patch(`/payments/${id}`, paymentData),
+  updatePayment: (id, paymentData) => API.patch(`/payments/${id}`),
   deletePayment: (id) => API.delete(`/payments/${id}`),
 };
 
-// ✅ Define API methods for Reviews
+// ✅ Reviews API
 export const ReviewService = {
   getAllReviews: () => API.get('/reviews'),
   getReviewById: (id) => API.get(`/reviews/${id}`),
   createReview: (reviewData) => API.post('/reviews', reviewData),
-  updateReview: (id, reviewData) => API.patch(`/reviews/${id}`, reviewData),
+  updateReview: (id, reviewData) => API.patch(`/reviews/${id}`),
   deleteReview: (id) => API.delete(`/reviews/${id}`),
 };
 
-// ✅ Define API methods for Authentication
+// ✅ Authentication API
 export const AuthService = {
   login: (credentials) => API.post('/auth/login', credentials),
   register: (userData) => API.post('/auth/register', userData),
@@ -98,18 +122,6 @@ export const AuthService = {
     localStorage.removeItem('token');
     return Promise.resolve();
   },
-};
-const handleError = (error) => {
-  if (error.response) {
-    console.error(`❌ API Error (${error.response.status}):`, error.response.data);
-    return Promise.reject(error.response.data);
-  } else if (error.request) {
-    console.error("❌ No response from server:", error.request);
-    return Promise.reject({ message: "Server did not respond" });
-  } else {
-    console.error("❌ Request Error:", error.message);
-    return Promise.reject({ message: error.message });
-  }
 };
 
 export default API;
