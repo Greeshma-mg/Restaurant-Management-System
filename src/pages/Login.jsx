@@ -52,7 +52,7 @@ const Login = () => {
     }
 
     // ✅ Correctly set the API URL from .env
-    const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
+    const backendURL = import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:5000/api";
 
     console.log("Backend URL:", backendURL); // Debugging
 
