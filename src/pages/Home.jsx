@@ -144,14 +144,22 @@ const Home = () => {
             </div>
           ))}
         </div>
-        <button onClick={handleReviewsNavigation} className="view-all-button">
-          {user ? "View All Reviews" : "Sign In to View Reviews"}
-        </button>
+        <button onClick={handleReviewsPopup} className="view-all-button">View All Reviews</button>
       </div>
+
+      {/* Popup Modal */}
+      {showReviewsPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h2>Reviews Update</h2>
+            <p>Reviews will be updated soon. Stay tuned!</p>
+            <button onClick={() => setShowReviewsPopup(false)} className="close-popup">Close</button>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
   );
 };
-
 export default Home;
