@@ -4,7 +4,7 @@ import "../assets/home.css";
 import AdminHome from "../components/AdminHome";
 import Footer from "../components/Footer";
 
-// Image Paths (For Public Folder)
+// Image Paths
 const images = {
   about: "/images/about.jpg",
   chef: "/images/chef.jpg",
@@ -21,28 +21,23 @@ const images = {
 const Home = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [showReviewsPopup, setShowReviewsPopup] = useState(false);
 
   useEffect(() => {
     try {
       const storedUser = JSON.parse(localStorage.getItem("user") || "null");
       setUser(storedUser);
-      console.log("Home Page Loaded - User:", storedUser);
     } catch (error) {
       console.error("Error parsing user from localStorage:", error);
       setUser(null);
     }
   }, []);
 
-  const goToLogin = () => navigate("/login");
   const handleOrderTypeNavigation = () => navigate("/order-type");
 
-  const handleReviewsNavigation = (e) => {
+  const handleReviewsPopup = (e) => {
     e.preventDefault();
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    navigate(user.role === "admin" ? "/admin/reviews" : "/reviews-coming-soon");
+    setShowReviewsPopup(true);
   };
 
   if (user?.role === "admin") return <AdminHome />;
@@ -55,7 +50,7 @@ const Home = () => {
       <div className="image-container">
         <img src={images.craving} alt="Restaurant Banner" className="background-image" />
         <div className="image-overlay">
-          <h1>THE COMFORT YOU CRAVE</h1>
+          <h1 className="hero-text">THE COMFORT YOU CRAVE</h1>
           <button onClick={handleOrderTypeNavigation} className="cta-button">ORDER NOW</button>
         </div>
       </div>
@@ -63,11 +58,7 @@ const Home = () => {
       {/* About Section */}
       <div className="about-section">
         <h2>Our Story</h2>
-        <p>
-          Founded in 2010, Savory Elegance has been serving exceptional cuisine for over a decade.
-          Our passion for quality ingredients and innovative recipes has made us a favorite 
-          destination for food lovers across the city.
-        </p>
+        <p>Founded in 2010, Savory Elegance has been serving exceptional cuisine for over a decade.</p>
         <img src={images.about} alt="About Us" />
       </div>
 
@@ -76,28 +67,20 @@ const Home = () => {
         <h2>Today's Specials</h2>
         <div className="featured-items">
           {[
-            { name: "Signature Pasta", description: "Our house specialty", price: "$14.99", imageSrc: images.pasta },
-            { name: "Grilled Salmon", description: "Fresh Atlantic salmon", price: "$18.99", imageSrc: images.salmon },
-            { name: "Chef's Dessert", description: "Surprise dessert daily", price: "$8.99", imageSrc: images.dessert },
-            { name: "Chef's Biriyani", description: "Aromatic rice dish", price: "$13.99", imageSrc: images.biriyani },
-            { name: "Chicken Grill", description: "Juicy, smoky chicken", price: "$18.99", imageSrc: images.chicken },
+            { name: "Signature Pasta", description: "Our house specialty", price: "$14.99", image: images.pasta },
+            { name: "Grilled Salmon", description: "Fresh Atlantic salmon", price: "$18.99", image: images.salmon },
+            { name: "Chef's Dessert", description: "Surprise dessert daily", price: "$8.99", image: images.dessert },
+            { name: "Chef's Biriyani", description: "Aromatic rice dish", price: "$13.99", image: images.biriyani },
+            { name: "Chicken Grill", description: "Juicy, smoky chicken", price: "$18.99", image: images.chicken },
           ].map((item, index) => (
-            <div className="featured-item" key={index}>
-              <div className="item-image">
-                <img src={item.imageSrc} alt={item.name} />
-              </div>
+            <div key={index} className="featured-item">
+              <img src={item.image} alt={item.name} />
               <h3>{item.name}</h3>
               <p>{item.description}</p>
               <span className="price">{item.price}</span>
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Call to Action Section */}
-      <div className="cta-section">
-        <button onClick={handleOrderTypeNavigation} className="cta-button">Browse Menu</button>
-        <button onClick={() => navigate("/reservations")} className="cta-button secondary">Make a Reservation</button>
       </div>
 
       {/* Chefs Section */}
@@ -110,9 +93,7 @@ const Home = () => {
             { name: "Chef Sarah", title: "Pastry Chef", bio: "Award-winning pastry artist", image: images.chef2 },
           ].map((chef, index) => (
             <div className="chef-card" key={index}>
-              <div className="chef-image">
-                <img src={chef.image} alt={chef.name} />
-              </div>
+              <img src={chef.image} alt={chef.name} className="chef-image" />
               <h3>{chef.name}</h3>
               <h4>{chef.title}</h4>
               <p>{chef.bio}</p>
@@ -121,8 +102,8 @@ const Home = () => {
         </div>
       </div>
 
-    {/* Reviews Section */}
-    <div className="reviews-section" id="reviews">
+      {/* Reviews Section */}
+      <div className="reviews-section" id="reviews">
         <h2>What Our Customers Say</h2>
         <div className="reviews-container">
           {[
@@ -131,15 +112,11 @@ const Home = () => {
             { name: "Sophia L.", rating: 5, comment: "Perfect from appetizers to dessert!", date: "Mar 5, 2025" },
           ].map((review, index) => (
             <div className="review-card" key={index}>
-              <div className="review-header">
-                <h3>{review.name}</h3>
-                <div className="rating">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <span key={i} className="star">★</span>
-                  ))}
-                </div>
+              <h3>{review.name}</h3>
+              <div className="rating">
+                {[...Array(review.rating)].map((_, i) => <span key={i} className="star">★</span>)}
               </div>
-              <p className="review-comment">"{review.comment}"</p>
+              <p>"{review.comment}"</p>
               <p className="review-date">{review.date}</p>
             </div>
           ))}
