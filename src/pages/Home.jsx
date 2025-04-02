@@ -1,19 +1,19 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../assets/home.css";
 import AdminHome from "../components/AdminHome";
 import Footer from "../components/Footer";
 
-// Image Imports (Ensure they're in the correct path)
-import aboutImage from "../assets/images/about.jpg";
-import chefImage from "../assets/images/chef.jpg";
-import chef1Image from "../assets/images/chef1.jpg";
-import chef2Image from "../assets/images/chef2.jpg";
-import cravingImage from "../assets/images/craving.jpg";
-import pastaImage from "../assets/images/pasta.jpg";
-import salmon1Image from "../assets/images/salmon1.jpg";
-import dessertImage from "../assets/images/dessert.jpg";
-import biriyaniImage from "../assets/images/biriyani.jpg";
-import chicken1Image from "../assets/images/chicken1.jpg";
+// Image Paths (For Public Folder)
+const aboutImage = "/images/about.jpg";
+const chefImage = "/images/chef.jpg";
+const chef1Image = "/images/chef1.jpg";
+const chef2Image = "/images/chef2.jpg";
+const cravingImage = "/images/craving.jpg";
+const pastaImage = "/images/pasta.jpg";
+const salmon1Image = "/images/salmon1.jpg";
+const dessertImage = "/images/dessert.jpg";
+const biriyaniImage = "/images/biriyani.jpg";
+const chicken1Image = "/images/chicken1.jpg";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const Home = () => {
     if (user.role === "admin") {
       navigate("/admin/reviews");
     } else {
-      navigate("/reviews-coming-soon"); // Redirect instead of an alert
+      navigate("/reviews-coming-soon");
     }
   }
 
