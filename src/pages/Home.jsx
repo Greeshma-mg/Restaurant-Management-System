@@ -1,180 +1,94 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/home.css";
 import AdminHome from "../components/AdminHome";
 import Footer from "../components/Footer";
 
 // Image Paths (For Public Folder)
-const aboutImage = "/images/about.jpg";
-const chefImage = "/images/chef.jpg";
-const chef1Image = "/images/chef1.jpg";
-const chef2Image = "/images/chef2.jpg";
-const cravingImage = "/images/craving.jpg";
-const pastaImage = "/images/pasta.jpg";
-const salmon1Image = "/images/salmon1.jpg";
-const dessertImage = "/images/dessert.jpg";
-const biriyaniImage = "/images/biriyani.jpg";
-const chicken1Image = "/images/chicken1.jpg";
+const images = {
+  about: "/images/about.jpg",
+  chef: "/images/chef.jpg",
+  chef1: "/images/chef1.jpg",
+  chef2: "/images/chef2.jpg",
+  craving: "/images/craving.jpg",
+  pasta: "/images/pasta.jpg",
+  salmon: "/images/salmon1.jpg",
+  dessert: "/images/dessert.jpg",
+  biriyani: "/images/biriyani.jpg",
+  chicken: "/images/chicken1.jpg",
+};
 
 const Home = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")) || null;
+  const [user, setUser] = useState(null);
 
-  // Navigation Functions
-  function goToLogin() {
-    navigate("/login");
-  }
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    setUser(storedUser ? JSON.parse(storedUser) : null);
+    console.log("Home Page Loaded - User:", storedUser);
+  }, []);
 
-  function handleOrderTypeNavigation() {
-    navigate("/order-type");
-  }
-
-  function handleReviewsNavigation(e) {
+  const goToLogin = () => navigate("/login");
+  const handleOrderTypeNavigation = () => navigate("/order-type");
+  const handleReviewsNavigation = (e) => {
     e.preventDefault();
-    
     if (!user) {
       navigate("/login");
       return;
     }
-    
-    if (user.role === "admin") {
-      navigate("/admin/reviews");
-    } else {
-      navigate("/reviews-coming-soon");
-    }
-  }
+    navigate(user.role === "admin" ? "/admin/reviews" : "/reviews-coming-soon");
+  };
 
-  // Admin View
-  if (user?.role === "admin") {
-    return <AdminHome />;
-  }
+  if (user?.role === "admin") return <AdminHome />;
 
-  // Customer View
-  if (user) {
-    return (
-      <div className="home-container">
-        <h1>Welcome to Savory Elegance</h1>
-
-        {/* Hero Section */}
-        <div className="image-container">
-          <img src={cravingImage} alt="Restaurant Banner" className="background-image" />
-          <div className="image-overlay">
-            <h1>THE COMFORT YOU CRAVE</h1>
-            <button onClick={handleOrderTypeNavigation} className="cta-button">ORDER NOW</button>
-          </div>
-        </div>
-
-        {/* About Section */}
-        <div className="about-section">
-          <div className="about-content">
-            <div className="about-text">
-              <h2>Our Story</h2>
-              <p>
-                Founded in 2010, Savory Elegance has been serving exceptional cuisine for over a decade.
-                Our passion for quality ingredients and innovative recipes has made us a favorite 
-                destination for food lovers across the city.
-              </p>
-            </div>
-            <div className="about-image">
-              <img src={aboutImage} alt="About Us" />
-            </div>
-          </div>
-        </div>
-
-        {/* Featured Dishes Section */}
-        <div className="featured-section">
-          <h2>Today's Specials</h2>
-          <div className="featured-items">
-            {[
-              { name: "Signature Pasta", description: "Our house specialty", price: "$14.99", imageSrc: pastaImage },
-              { name: "Grilled Salmon", description: "Fresh Atlantic salmon", price: "$18.99", imageSrc: salmon1Image },
-              { name: "Chef's Dessert", description: "Surprise dessert daily", price: "$8.99", imageSrc: dessertImage },
-              { name: "Chef's Biriyani", description: "Aromatic rice dish", price: "$13.99", imageSrc: biriyaniImage },
-              { name: "Chicken Grill", description: "Juicy, smoky chicken", price: "$18.99", imageSrc: chicken1Image },
-            ].map((item, index) => (
-              <div className="featured-item" key={`dish-${index}`}>
-                <div className="item-image">
-                  <img src={item.imageSrc} alt={item.name} />
-                </div>
-                <h3>{item.name}</h3>
-                <p>{item.description}</p>
-                <span className="price">{item.price}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Call-to-Action Buttons */}
-        <div className="cta-section">
-          <button onClick={handleOrderTypeNavigation} className="cta-button">Browse Menu</button>
-          <button onClick={() => navigate("/reservations")} className="cta-button secondary">Make a Reservation</button>
-        </div>
-
-        {/* Chef Team Section */}
-        <div className="chefs-section">
-          <h2>Meet Our Culinary Team</h2>
-          <div className="chefs-container">
-            {[
-              { name: "Chef Maria", title: "Executive Chef", bio: "15 years in fine dining", image: chefImage },
-              { name: "Chef James", title: "Sous Chef", bio: "Fusion cuisine expert", image: chef1Image },
-              { name: "Chef Sarah", title: "Pastry Chef", bio: "Award-winning pastry artist", image: chef2Image },
-            ].map((chef, index) => (
-              <div className="chef-card" key={`chef-${index}`}>
-                <div className="chef-image">
-                  <img src={chef.image} alt={chef.name} />
-                </div>
-                <h3>{chef.name}</h3>
-                <h4>{chef.title}</h4>
-                <p>{chef.bio}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Reviews Section */}
-        <div className="reviews-section" id="reviews">
-          <h2>What Our Customers Say</h2>
-          <div className="reviews-container">
-            {[
-              { name: "Emily T.", rating: 5, comment: "Best dining experience!", date: "Feb 15, 2025" },
-              { name: "Michael R.", rating: 4, comment: "Great service & atmosphere.", date: "Jan 28, 2025" },
-              { name: "Sophia L.", rating: 5, comment: "Perfect from appetizers to dessert!", date: "Mar 5, 2025" },
-            ].map((review, index) => (
-              <div className="review-card" key={`review-${index}`}>
-                <div className="review-header">
-                  <h3>{review.name}</h3>
-                  <div className="rating">
-                    {[...Array(review.rating)].map((_, starIndex) => (
-                      <span key={`star-${starIndex}`} className="star">★</span>
-                    ))}
-                  </div>
-                </div>
-                <p className="review-comment">"{review.comment}"</p>
-                <p className="review-date">{review.date}</p>
-              </div>
-            ))}
-          </div>
-          <button onClick={handleReviewsNavigation} className="view-all-button">View All Reviews</button>
-        </div>
-
-        <Footer />
-      </div>
-    );
-  }
-
-  // Guest View (Not Logged In)
   return (
     <div className="home-container">
+      {/* Hero Section */}
       <div className="image-container">
-        <img src={cravingImage} alt="Restaurant Banner" className="background-image" />
+        <img src={images.craving} alt="Restaurant Banner" className="background-image" />
         <div className="image-overlay">
           <h1>THE COMFORT YOU CRAVE</h1>
           <button onClick={handleOrderTypeNavigation} className="cta-button">ORDER NOW</button>
         </div>
       </div>
 
+      {/* About Section */}
+      <div className="about-section">
+        <h2>Our Story</h2>
+        <p>
+          Founded in 2010, Savory Elegance has been serving exceptional cuisine for over a decade.
+          Our passion for quality ingredients and innovative recipes has made us a favorite 
+          destination for food lovers across the city.
+        </p>
+        <img src={images.about} alt="About Us" />
+      </div>
+
+      {/* Featured Dishes */}
+      <div className="featured-section">
+        <h2>Today's Specials</h2>
+        <div className="featured-items">
+          {[
+            { name: "Signature Pasta", price: "$14.99", image: images.pasta },
+            { name: "Grilled Salmon", price: "$18.99", image: images.salmon },
+            { name: "Chef's Dessert", price: "$8.99", image: images.dessert },
+            { name: "Biriyani", price: "$13.99", image: images.biriyani },
+            { name: "Chicken Grill", price: "$18.99", image: images.chicken },
+          ].map((item, index) => (
+            <div key={index} className="featured-item">
+              <img src={item.image} alt={item.name} />
+              <h3>{item.name}</h3>
+              <span className="price">{item.price}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Reviews Section */}
       <div className="reviews-section">
         <h2>What Our Customers Say</h2>
-        <button onClick={goToLogin} className="view-all-button">Sign In to View All Reviews</button>
+        <button onClick={user ? handleReviewsNavigation : goToLogin} className="view-all-button">
+          {user ? "View All Reviews" : "Sign In to View Reviews"}
+        </button>
       </div>
 
       <Footer />
