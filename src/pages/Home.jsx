@@ -121,8 +121,8 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Reviews Section */}
-      <div className="reviews-section" id="reviews">
+    {/* Reviews Section */}
+    <div className="reviews-section" id="reviews">
         <h2>What Our Customers Say</h2>
         <div className="reviews-container">
           {[
@@ -162,4 +162,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
