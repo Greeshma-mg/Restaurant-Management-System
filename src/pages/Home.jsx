@@ -1,34 +1,35 @@
 import { Link, useNavigate } from "react-router-dom";
 import "../assets/home.css";
-import AdminHome from "../components/AdminHome"; 
+import AdminHome from "../components/AdminHome";
 import Footer from "../components/Footer";
-import aboutImage from "/images/about.jpg";
-import chefImage from "/images/chef.jpg";
-import chef1Image from "/images/chef1.jpg";
-import chef2Image from "/images/chef2.jpg";
-import cravingImage from "/images/craving.jpg"; 
-import pastaImage from "/images/pasta.jpg";
-import salmon1Image from "/images/salmon1.jpg";
-import dessertImage from "/images/dessert.jpg";
-import biriyaniImage from "/images/biriyani.jpg";
-import chicken1Image from "/images/chicken1.jpg";
+
+// Image Imports (Ensure they're in the correct path)
+import aboutImage from "../assets/images/about.jpg";
+import chefImage from "../assets/images/chef.jpg";
+import chef1Image from "../assets/images/chef1.jpg";
+import chef2Image from "../assets/images/chef2.jpg";
+import cravingImage from "../assets/images/craving.jpg";
+import pastaImage from "../assets/images/pasta.jpg";
+import salmon1Image from "../assets/images/salmon1.jpg";
+import dessertImage from "../assets/images/dessert.jpg";
+import biriyaniImage from "../assets/images/biriyani.jpg";
+import chicken1Image from "../assets/images/chicken1.jpg";
 
 const Home = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user")) || null;
 
+  // Navigation Functions
   function goToLogin() {
-    console.log("Navigating to login page");
     navigate("/login");
   }
 
   function handleOrderTypeNavigation() {
-    navigate("/order-type"); 
+    navigate("/order-type");
   }
 
   function handleReviewsNavigation(e) {
-    e.preventDefault(); 
-    console.log("Reviews navigation clicked");
+    e.preventDefault();
     
     if (!user) {
       navigate("/login");
@@ -38,12 +39,12 @@ const Home = () => {
     if (user.role === "admin") {
       navigate("/admin/reviews");
     } else {
-      alert("Full reviews page coming soon! For now, you can see our featured reviews here.");
+      navigate("/reviews-coming-soon"); // Redirect instead of an alert
     }
   }
 
   // Admin View
-  if (user && user.role === "admin") {
+  if (user?.role === "admin") {
     return <AdminHome />;
   }
 
@@ -52,6 +53,8 @@ const Home = () => {
     return (
       <div className="home-container">
         <h1>Welcome to Savory Elegance</h1>
+
+        {/* Hero Section */}
         <div className="image-container">
           <img src={cravingImage} alt="Restaurant Banner" className="background-image" />
           <div className="image-overlay">
@@ -68,16 +71,16 @@ const Home = () => {
               <p>
                 Founded in 2010, Savory Elegance has been serving exceptional cuisine for over a decade.
                 Our passion for quality ingredients and innovative recipes has made us a favorite 
-                destination for food enthusiasts across the city.
+                destination for food lovers across the city.
               </p>
             </div>
             <div className="about-image">
-              <img src={aboutImage} alt="about" />
+              <img src={aboutImage} alt="About Us" />
             </div>
           </div>
         </div>
 
-        {/* Featured Section */}
+        {/* Featured Dishes Section */}
         <div className="featured-section">
           <h2>Today's Specials</h2>
           <div className="featured-items">
@@ -88,7 +91,7 @@ const Home = () => {
               { name: "Chef's Biriyani", description: "Aromatic rice dish", price: "$13.99", imageSrc: biriyaniImage },
               { name: "Chicken Grill", description: "Juicy, smoky chicken", price: "$18.99", imageSrc: chicken1Image },
             ].map((item, index) => (
-              <div className="featured-item" key={index}>
+              <div className="featured-item" key={`dish-${index}`}>
                 <div className="item-image">
                   <img src={item.imageSrc} alt={item.name} />
                 </div>
@@ -100,12 +103,13 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Call-to-Action Buttons */}
         <div className="cta-section">
           <button onClick={handleOrderTypeNavigation} className="cta-button">Browse Menu</button>
           <button onClick={() => navigate("/reservations")} className="cta-button secondary">Make a Reservation</button>
         </div>
 
-        {/* Chefs Section */}
+        {/* Chef Team Section */}
         <div className="chefs-section">
           <h2>Meet Our Culinary Team</h2>
           <div className="chefs-container">
@@ -114,7 +118,7 @@ const Home = () => {
               { name: "Chef James", title: "Sous Chef", bio: "Fusion cuisine expert", image: chef1Image },
               { name: "Chef Sarah", title: "Pastry Chef", bio: "Award-winning pastry artist", image: chef2Image },
             ].map((chef, index) => (
-              <div className="chef-card" key={index}>
+              <div className="chef-card" key={`chef-${index}`}>
                 <div className="chef-image">
                   <img src={chef.image} alt={chef.name} />
                 </div>
@@ -135,12 +139,12 @@ const Home = () => {
               { name: "Michael R.", rating: 4, comment: "Great service & atmosphere.", date: "Jan 28, 2025" },
               { name: "Sophia L.", rating: 5, comment: "Perfect from appetizers to dessert!", date: "Mar 5, 2025" },
             ].map((review, index) => (
-              <div className="review-card" key={index}>
+              <div className="review-card" key={`review-${index}`}>
                 <div className="review-header">
                   <h3>{review.name}</h3>
                   <div className="rating">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <span key={i} className="star">★</span>
+                    {[...Array(review.rating)].map((_, starIndex) => (
+                      <span key={`star-${starIndex}`} className="star">★</span>
                     ))}
                   </div>
                 </div>
@@ -168,7 +172,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="reviews-section" id="reviews">
+      <div className="reviews-section">
         <h2>What Our Customers Say</h2>
         <button onClick={goToLogin} className="view-all-button">Sign In to View All Reviews</button>
       </div>
