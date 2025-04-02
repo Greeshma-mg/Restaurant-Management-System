@@ -7,6 +7,8 @@ const generateToken = (id) => {
 };
 
 // ✅ Register User
+const bcrypt = require("bcryptjs");
+
 exports.registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -14,7 +16,14 @@ exports.registerUser = async (req, res) => {
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: "User already exists" });
 
-    const user = await User.create({ name, email, password, role });
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword, // 🔹 Ensure hashed password is stored
+      role
+    });
 
     res.status(201).json({
       _id: user.id,
@@ -28,16 +37,31 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+
 // ✅ Login User
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
-    if (!user || !(await user.matchPassword(password))) {
+
+    if (!user) {
+      console.log("❌ User not found for email:", email);
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
+    console.log("🔹 Stored password in DB:", user.password);
+    console.log("🔹 Entered password:", password);
+
+    const isMatch = await user.matchPassword(password);
+
+    if (!isMatch) {
+      console.log("❌ Password does not match!");
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    console.log("✅ User logged in:", user.email);
+    
     res.json({
       _id: user.id,
       name: user.name,
@@ -46,6 +70,7 @@ exports.loginUser = async (req, res) => {
       token: generateToken(user.id),
     });
   } catch (error) {
+    console.error("🔥 Login Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
