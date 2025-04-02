@@ -23,13 +23,19 @@ const Home = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    setUser(storedUser ? JSON.parse(storedUser) : null);
-    console.log("Home Page Loaded - User:", storedUser);
+    try {
+      const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+      setUser(storedUser);
+      console.log("Home Page Loaded - User:", storedUser);
+    } catch (error) {
+      console.error("Error parsing user from localStorage:", error);
+      setUser(null);
+    }
   }, []);
 
   const goToLogin = () => navigate("/login");
   const handleOrderTypeNavigation = () => navigate("/order-type");
+
   const handleReviewsNavigation = (e) => {
     e.preventDefault();
     if (!user) {
@@ -43,6 +49,8 @@ const Home = () => {
 
   return (
     <div className="home-container">
+      <h1>Welcome to Savory Elegance</h1>
+
       {/* Hero Section */}
       <div className="image-container">
         <img src={images.craving} alt="Restaurant Banner" className="background-image" />
@@ -86,7 +94,7 @@ const Home = () => {
       {/* Reviews Section */}
       <div className="reviews-section">
         <h2>What Our Customers Say</h2>
-        <button onClick={user ? handleReviewsNavigation : goToLogin} className="view-all-button">
+        <button onClick={(e) => handleReviewsNavigation(e)} className="view-all-button">
           {user ? "View All Reviews" : "Sign In to View Reviews"}
         </button>
       </div>

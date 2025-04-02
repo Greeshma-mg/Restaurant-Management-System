@@ -51,8 +51,12 @@ const Login = () => {
       return;
     }
 
+    // ✅ Correctly set the API URL from .env
+    const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
+
+    console.log("Backend URL:", backendURL); // Debugging
+
     try {
-      const backendURL = import.meta.env.VITE_BACKEND_URL;
       const res = await axios.post(`${backendURL}/users/login`, { email, password });
 
       console.log("API Response:", res.data); // Debugging
