@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const path = require("path");
-const { notFound, errorHandler } = require("./middleware/errorMiddleware"); // ✅ Import
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
 
@@ -17,25 +17,37 @@ const restaurantRoutes = require("./routes/restaurantRoutes");
 
 const app = express();
 
+// ✅ Middleware
 app.use(express.json());
 
+// ✅ Serve static uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// ✅ CORS Configuration
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://dazzling-sfogliatella-fee704.netlify.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://restaurant-management.netlify.app", // ✅ Update frontend URL
+      "https://dazzling-sfogliatella-fee704.netlify.app",
+    ],
     credentials: true,
   })
 );
 
+// ✅ MongoDB Connection
 mongoose
-  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-management", {})
+  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-management", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => {
     console.error("❌ Database Connection Error:", err.message);
     process.exit(1);
   });
 
+// ✅ API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
@@ -48,10 +60,8 @@ app.get("/", (req, res) => {
   res.send("Welcome to RestaurantPro API");
 });
 
-// ✅ Use Not Found Middleware
+// ✅ Error Handling Middleware
 app.use(notFound);
-
-// ✅ Use Global Error Handler Middleware
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
