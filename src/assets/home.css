@@ -14,12 +14,16 @@
   height: 500px;
   overflow: hidden;
   margin-bottom: 30px;
+  /* Remove any potential gap */
+  margin-top: 0;
+  line-height: 0;
 }
 
 .background-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block; /* Removes potential white space */
 }
 
 .image-overlay {
@@ -32,7 +36,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.4);
+  /* Reduced opacity for less shading */
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .hero-text {
@@ -62,6 +67,7 @@
   background-color: #e64a19;
   transform: scale(1.05);
 }
+
 /* About Section */
 .about-section {
   padding: 50px 20px;
@@ -110,6 +116,7 @@
   height: 180px;
   object-fit: cover;
   border-radius: 8px;
+  display: block; /* Ensures no extra space */
 }
 
 .featured-item h3 {
@@ -162,6 +169,7 @@
   height: 240px;
   object-fit: cover;
   border-radius: 10px;
+  display: block; /* Ensures no extra space */
 }
 
 .chef-card h3 {
