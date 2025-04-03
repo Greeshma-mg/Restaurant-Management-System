@@ -58,7 +58,7 @@ const Home = () => {
       {/* About Section */}
       <div className="about-section">
         <h2>Our Story</h2>
-        <p>Founded in 2010, Savory Elegance has been serving exceptional cuisine for over a decade.</p>
+        <p>Nestled in the heart of Vytila, Kochi, Savory Elegance is where fine dining meets a warm and inviting ambiance. Our carefully curated menu blends traditional flavors with modern culinary artistry, offering an unforgettable experience for every guest. Whether you're here for a romantic dinner, a family gathering, or a casual bite, our expert chefs and friendly staff ensure every meal is a delight. From handcrafted dishes to exquisite desserts, Savory Elegance is your go-to destination for an extraordinary dining experience..</p>
         <img src={images.about} alt="About Us" />
       </div>
 
