@@ -26,14 +26,13 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // ✅ CORS Configuration
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://restaurant-management.netlify.app", // ✅ Update frontend URL
-      "https://dazzling-sfogliatella-fee704.netlify.app",
-    ],
+    origin: "*", // Allow all origins temporarily for testing
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 // ✅ MongoDB Connection
 mongoose
