@@ -16,7 +16,6 @@ const upload = require("../middleware/uploadMiddleware");
 
 const router = express.Router();
 
-// ✅ Ensure "uploads/" directory exists
 const ensureUploadDir = () => {
   try {
     const uploadDir = path.join(__dirname, "../uploads");
@@ -30,14 +29,11 @@ const ensureUploadDir = () => {
 };
 ensureUploadDir();
 
-// ✅ Public routes
-router.get("/", getMenuItems); // Fetch all menu items
-router.get("/categories", getMenuCategories); // Fetch unique categories
+router.get("/", getMenuItems); 
+router.get("/categories", getMenuCategories); 
 
-// ✅ Use getItemsByCategory directly
 router.get("/category/:category", getItemsByCategory);
 
-// ✅ Protected routes (admin only)
 router.post("/", protect, isAdmin, upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {

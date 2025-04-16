@@ -1,8 +1,7 @@
-const MenuItem = require("../models/Menu"); // ✅ Corrected import
+const MenuItem = require("../models/Menu"); 
 const fs = require("fs");
 const path = require("path");
 
-// ✅ Get all menu items
 const getMenuItems = async (req, res) => {
   try {
     const items = await MenuItem.find();

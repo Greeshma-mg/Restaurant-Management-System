@@ -16,17 +16,13 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const restaurantRoutes = require("./routes/restaurantRoutes");
 
 const app = express();
-
-// ✅ Middleware
 app.use(express.json());
 
-// ✅ Serve static uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ CORS Configuration
 app.use(
   cors({
-    origin: "https://dazzling-sfogliatella-fee704.netlify.app", // Your frontend domain on Netlify
+    origin: "https://dazzling-sfogliatella-fee704.netlify.app", 
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -34,7 +30,6 @@ app.use(
 );
 
 
-// ✅ MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-management", {
     useNewUrlParser: true,
@@ -46,7 +41,6 @@ mongoose
     process.exit(1);
   });
 
-// ✅ API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
@@ -59,7 +53,6 @@ app.get("/", (req, res) => {
   res.send("Welcome to RestaurantPro API");
 });
 
-// ✅ Error Handling Middleware
 app.use(notFound);
 app.use(errorHandler);
 

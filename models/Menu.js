@@ -11,7 +11,7 @@ const menuSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
-      min: [0, "Price must be a non-negative number"], // ✅ Improved error message
+      min: [0, "Price must be a non-negative number"], 
     },
     category: {
       type: String,
@@ -19,7 +19,7 @@ const menuSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
       minlength: [2, "Category must be at least 2 characters long"],
-      index: true, // ✅ Faster lookups
+      index: true, 
     },
     description: {
       type: String,
@@ -51,13 +51,12 @@ const menuSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ✅ Virtual field for backward compatibility
+
 menuSchema.virtual("availability").get(function () {
   return this.isAvailable ?? true;
 });
 
-// ✅ Ensure virtuals are included when converting to JSON
 menuSchema.set("toJSON", { virtuals: true });
 menuSchema.set("toObject", { virtuals: true });
 
-module.exports = mongoose.model("MenuItem", menuSchema); // ✅ Ensure correct export
+module.exports = mongoose.model("MenuItem", menuSchema); 
