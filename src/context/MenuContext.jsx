@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/menu`;
+const API_URL = `${import.meta.env.VITE_API_URL}/api/menu`;
 const MenuContext = createContext(null);
 
 export function useMenu() {
