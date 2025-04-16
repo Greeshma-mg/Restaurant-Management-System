@@ -1,9 +1,8 @@
 import axios from 'axios';
 
-// ✅ Set API base URL (from .env or default to localhost)
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-console.log("✅ API Base URL:", API_BASE_URL);  // Debugging
+console.log("✅ API Base URL:", API_BASE_URL);  
 
 const API = axios.create({
   baseURL: API_BASE_URL,
@@ -12,11 +11,10 @@ const API = axios.create({
   },
 });
 
-// ✅ Interceptor to add Authorization header
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
 
-  console.log("🔑 Token:", token); // Debugging
+  console.log("🔑 Token:", token); 
 
   if (token && token !== "null") {
     config.headers.Authorization = `Bearer ${token}`;
@@ -24,7 +22,6 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ Handle API errors
 const handleError = (error) => {
   if (error.response) {
     console.error(`❌ API Error (${error.response.status}):`, error.response.data);
@@ -38,7 +35,6 @@ const handleError = (error) => {
   }
 };
 
-// ✅ Menu API
 export const MenuService = {
   getAllMenus: async () => {
     try {

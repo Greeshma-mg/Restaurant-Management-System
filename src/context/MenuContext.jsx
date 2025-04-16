@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/menu`;
-
+const API_URL = `${import.meta.env.VITE_API_URL}/menu`;
 const MenuContext = createContext(null);
 
 export function useMenu() {
@@ -23,7 +22,6 @@ export function MenuProvider({ children }) {
     setError(null);
     
     try {
-      // Add cache-busting parameter to prevent caching
       const response = await fetch(`${API_URL}?t=${Date.now()}`);
       
       if (!response.ok) {
@@ -84,15 +82,13 @@ export function MenuProvider({ children }) {
       const newItem = await response.json();
       console.log("✅ Menu Item Added:", newItem);
       
-      // Update state immediately
       setMenuItems(prevMenu => [...prevMenu, newItem]);
       
-      // Fetch updated list to ensure consistency
       await fetchMenuItems();
       
     } catch (error) {
       console.error("❌ Error adding menu item:", error.message);
-      throw error; // Rethrow to handle in the component
+      throw error; 
     }
   };
 
@@ -113,12 +109,10 @@ export function MenuProvider({ children }) {
       const updatedItem = await response.json();
       console.log("✅ Menu Item Updated:", updatedItem);
       
-      // Update state immediately
       setMenuItems(prevMenu => 
         prevMenu.map(item => (item._id === id || item.id === id) ? updatedItem : item)
       );
       
-      // Fetch updated list to ensure consistency
       await fetchMenuItems();
       
     } catch (error) {
@@ -142,10 +136,8 @@ export function MenuProvider({ children }) {
       
       console.log("✅ Menu Item Deleted:", id);
       
-      // Update state immediately
       setMenuItems(prevMenu => prevMenu.filter(item => item._id !== id && item.id !== id));
       
-      // Fetch updated list to ensure consistency
       await fetchMenuItems();
       
     } catch (error) {

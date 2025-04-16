@@ -1,14 +1,11 @@
 import axios from "axios";
 
-// Use backend URL from environment variable or default to Render URL
 const API_BASE_URL = process.env.REACT_APP_API_URL || "https://restaurant-management-system-e4ms.onrender.com/api";
 
-// Create an axios instance
 const API = axios.create({
-  baseURL: API_BASE_URL, // ✅ Correct way to set the base URL
+  baseURL: API_BASE_URL, 
 });
 
-// Add request interceptor to include Authorization header
 API.interceptors.request.use((req) => {
   try {
     const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
@@ -21,7 +18,6 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-// Function to fetch menu items (for testing API connection)
 export const fetchMenuItems = async () => {
   try {
     const response = await API.get("/menu");
