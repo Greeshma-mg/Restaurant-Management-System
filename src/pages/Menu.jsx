@@ -93,11 +93,9 @@ const Menu = () => {
     const fetchMenuData = async () => {
       setLoading(true);
       try {
-        // Fetch menu items
         const menuResponse = await MenuService.getAllMenus();
         console.log("✅ Full Menu API Response:", JSON.stringify(menuResponse, null, 2));
         
-        // Properly handle the menu response
         let menuData = [];
         if (Array.isArray(menuResponse)) {
           menuData = menuResponse;
@@ -105,7 +103,6 @@ const Menu = () => {
           menuData = menuResponse.data;
         }
         
-        // Transform API response to match expected format if necessary
         const formattedMenuItems = menuData.map(item => ({
           id: item._id || item.id,
           name: item.name,
@@ -144,7 +141,6 @@ const Menu = () => {
 
         setCategories(categoriesList);
         
-        // If there's a category parameter, load that category
         if (category) {
           handleViewCategory(category);
         }

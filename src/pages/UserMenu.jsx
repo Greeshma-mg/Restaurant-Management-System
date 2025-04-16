@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/UserMenu.css';
-
-const backendURL = "http://localhost:5000";
+import API from '../api';
+const backendURL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const UserMenu = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -10,110 +10,68 @@ const UserMenu = () => {
   const [error, setError] = useState(null);
   const [lastFetchTime, setLastFetchTime] = useState(null);
 
-  // Improved fetch function with better error handling and response processing
   const fetchMenuItems = async () => {
     setIsLoading(true);
     const timestamp = Date.now();
     
     try {
       console.log(`Fetching menu items at ${new Date().toLocaleTimeString()}...`);
-      const response = await fetch(`${backendURL}/api/menu?t=${timestamp}`);
+      const response = await API.get(`/menu?t=${timestamp}`);
       
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: Failed to fetch menu`);
-      }
-      
-      // Get the raw text first for debugging
-      const responseText = await response.text();
-      console.log("Raw API Response:", responseText);
-      
-      let data;
-      try {
-        // Parse the response text to JSON
-        data = JSON.parse(responseText);
-        console.log("Parsed API Data:", data);
-      } catch (parseError) {
-        console.error("Parse error:", parseError);
-        throw new Error(`Failed to parse API response: ${parseError.message}`);
-      }
-      
-      // Handle different response formats
+      const data = response.data;
+      console.log("Fetched data from API:", data);
+  
       let items = [];
       if (Array.isArray(data)) {
         items = data;
-        console.log("Data is an array with", items.length, "items");
-      } else if (data && data.data && Array.isArray(data.data)) {
+      } else if (data?.data && Array.isArray(data.data)) {
         items = data.data;
-        console.log("Data has a data property with", items.length, "items");
       } else {
-        console.warn("Unexpected data structure:", data);
         throw new Error("API returned unexpected data structure");
       }
-      
-      // Ensure all items have required properties
+  
       items = items.filter(item => item && item.name && item.price);
-      
-      // Log each item for debugging
-      items.forEach((item, index) => {
-        console.log(`Item ${index}: ${item.name}, Category: ${item.category}, Available: ${
-          item.isAvailable !== false && item.availability !== false
-        }`);
-      });
-      
+  
       setMenuItems(items);
       setLastFetchTime(new Date().toLocaleTimeString());
-      
-      // Store in localStorage as backup
       localStorage.setItem('menuItems', JSON.stringify(items));
-      
+      setError(null);
+  
     } catch (error) {
-      console.error("Error fetching menu:", error);
-      setError(error.message);
-      
-      // Try to recover from localStorage
+      console.error("❌ Error fetching menu:", error);
+      setError(error.response?.data?.message || error.message);
+  
       const cachedItems = localStorage.getItem('menuItems');
       if (cachedItems) {
-        try {
-          const parsedItems = JSON.parse(cachedItems);
-          if (Array.isArray(parsedItems) && parsedItems.length > 0) {
-            console.log("Recovered", parsedItems.length, "items from localStorage");
-            setMenuItems(parsedItems);
-            setError(`Failed to fetch fresh data (using cached data): ${error.message}`);
-          }
-        } catch (cacheError) {
-          console.error("Failed to parse cached menu items:", cacheError);
-        }
+        const parsedItems = JSON.parse(cachedItems);
+        setMenuItems(parsedItems);
+        setError(`Failed to fetch fresh data. Using cached data: ${error.message}`);
       }
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchMenuItems();
     
-    // Set up periodic refresh
-    const intervalId = setInterval(fetchMenuItems, 30000); // Refresh every 30 seconds
+    const intervalId = setInterval(fetchMenuItems, 30000); 
     
     return () => clearInterval(intervalId);
   }, []);
 
-  // Extract categories with proper case handling
   const categories = ['All', ...new Set(
     menuItems
       .filter(item => item && item.category)
       .map(item => item.category)
   )];
 
-  // Filter menu items with better availability checking
   const filteredItems = menuItems.filter(item => {
     if (!item) return false;
     
-    // More robust availability check
     const isItemAvailable = (
-      // Check various availability properties
       (item.isAvailable === true || item.availability === true) ||
-      // Consider available by default if properties are undefined
       (item.isAvailable === undefined && item.availability === undefined)
     );
     
@@ -218,7 +176,6 @@ const UserMenu = () => {
         </div>
       </div>
       
-      {/* Enhanced debug section */}
       <details style={{margin: '20px', padding: '10px', border: '1px solid #ddd', borderRadius: '4px'}}>
         <summary>Debug Information</summary>
         <div style={{fontSize: '0.8rem', fontFamily: 'monospace', whiteSpace: 'pre-wrap'}}>
