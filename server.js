@@ -26,7 +26,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // ✅ CORS Configuration
 app.use(
   cors({
-    origin: "*", // Allow all origins temporarily for testing
+    origin: "https://dazzling-sfogliatella-fee704.netlify.app", // Your frontend domain on Netlify
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
