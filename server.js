@@ -7,24 +7,12 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
 
-const userRoutes = require("./routes/userRoutes");
-const menuRoutes = require("./routes/menuRoutes");
-const orderRoutes = require("./routes/orderRoutes");
-const reservationRoutes = require("./routes/reservationRoutes");
-const paymentRoutes = require("./routes/paymentRoutes");
-const reviewRoutes = require("./routes/reviewRoutes");
-const restaurantRoutes = require("./routes/restaurantRoutes");
-
 const app = express();
-app.use(express.json());
 
-// Static file serving for uploads
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Dynamic CORS Configuration
+// ✅ Place CORS at the very top
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
-  : ["https://dazzling-sfogliatella-fee704.netlify.app"]; // default for now
+  : ["https://dazzling-sfogliatella-fee704.netlify.app"];
 
 app.use(
   cors({
@@ -41,7 +29,13 @@ app.use(
   })
 );
 
-// MongoDB Connection
+// ✅ Then use express.json and other middleware
+app.use(express.json());
+
+// ✅ Static file serving (after CORS)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// ✅ MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-management", {
     useNewUrlParser: true,
@@ -53,7 +47,15 @@ mongoose
     process.exit(1);
   });
 
-// Routes
+// ✅ Routes
+const userRoutes = require("./routes/userRoutes");
+const menuRoutes = require("./routes/menuRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const reservationRoutes = require("./routes/reservationRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
+const restaurantRoutes = require("./routes/restaurantRoutes");
+
 app.use("/api/users", userRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
@@ -66,10 +68,10 @@ app.get("/", (req, res) => {
   res.send("Welcome to RestaurantPro API");
 });
 
-// Error Handling Middleware
+// ✅ Error Handling Middleware
 app.use(notFound);
 app.use(errorHandler);
 
-// Start Server
+// ✅ Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
