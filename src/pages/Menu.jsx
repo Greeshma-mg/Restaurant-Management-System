@@ -396,7 +396,9 @@ const Menu = () => {
       </div>
     );
   }
-
+  const subtotal = parseFloat(calculateTotal());
+  const tax = parseFloat((subtotal * 0.1).toFixed(2));
+  const total = parseFloat((subtotal + tax).toFixed(2));
   if (showPayment) {
     return (
       <Payment
