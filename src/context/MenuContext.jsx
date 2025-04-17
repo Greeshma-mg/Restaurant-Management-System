@@ -38,31 +38,50 @@ export function MenuProvider({ children }) {
   }, [fetchMenuItems]);
 
   const addMenuItem = async (formData) => {
-    await API.post("/menu", formData, { headers: { "Content-Type":"multipart/form-data" } });
+    const token = localStorage.getItem("token");
+    await API.post("/menu", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     await fetchMenuItems();
   };
 
   const updateMenuItem = async (id, formData) => {
-    await API.put(`/menu/${id}`, formData, { headers: { "Content-Type":"multipart/form-data" } });
+    const token = localStorage.getItem("token");
+    await API.put(`/menu/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     await fetchMenuItems();
   };
 
   const deleteMenuItem = async (id) => {
-    await API.delete(`/menu/${id}`);
-    setMenuItems(mi => mi.filter(i => i._id !== id));
+    const token = localStorage.getItem("token");
+    await API.delete(`/menu/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setMenuItems((mi) => mi.filter((i) => i._id !== id));
   };
 
   return (
-    <MenuContext.Provider value={{
-      menuItems,
-      categories,
-      isLoading,
-      error,
-      fetchMenuItems,
-      addMenuItem,
-      updateMenuItem,
-      deleteMenuItem
-    }}>
+    <MenuContext.Provider
+      value={{
+        menuItems,
+        categories,
+        isLoading,
+        error,
+        fetchMenuItems,
+        addMenuItem,
+        updateMenuItem,
+        deleteMenuItem,
+      }}
+    >
       {children}
     </MenuContext.Provider>
   );
