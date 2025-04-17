@@ -343,36 +343,34 @@ const Menu = () => {
   const submitOrder = async (orderDetails) => {
     try {
       setLoading(true);
+  
+      // Calculate subtotal just once as a number
+      const subtotal = parseFloat(calculateTotal());
+      const tax = parseFloat((subtotal * 0.1).toFixed(2));
+      const total = parseFloat((subtotal + tax).toFixed(2));
+  
       const orderData = {
         items: cart.map(item => ({
           itemId: item.id || item._id,
           name: item.name,
           quantity: item.quantity || 1,
-          price: parseFloat(item.price.toString().replace(/[^0-9.]/g, ''))
+          price: parseFloat(item.price.toString().replace(/[^0-9.]/g, '')),
         })),
         orderType: orderType,
-        subtotal: parseFloat(calculateTotal()),
-        tax: parseFloat((parseFloat(calculateTotal()) * 0.1).toFixed(2)),
-        total: parseFloat((parseFloat(calculateTotal()) + parseFloat((parseFloat(calculateTotal()) * 0.1).toFixed(2))).toFixed(2)),
+        subtotal,
+        tax,
+        total,
         ...orderDetails
       };
-
-      const response = await OrderService.createOrder(orderData);
-
-      // Clear cart after successful order
-      setCart([]);
-      localStorage.removeItem('cart');
-
+  
+      // now send orderData to backend...
+    } catch (err) {
+      console.error("❌ Submit order error:", err);
+    } finally {
       setLoading(false);
-
-      return response.data;
-    } catch (error) {
-      console.error("Error submitting order:", error);
-      setError("Failed to submit order. Please try again.");
-      setLoading(false);
-      throw error;
     }
   };
+  
 
   const handleBackFromCheckout = () => {
     setShowPayment(false);

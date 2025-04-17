@@ -75,16 +75,13 @@ function App() {
           </>
         )}
 
-        {/* Routes */}
         <Routes>
-          {/* Public Routes */}
           <Route path="/login" element={<Login setUser={setUser} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/payment" element={<Payment />} />
 
-          {/* Home Route - Conditional Redirect */}
           <Route
             path="/"
             element={
@@ -100,7 +97,6 @@ function App() {
             }
           />
 
-          {/* ✅ Customer & Manager Routes Fix */}
           <Route
   path="/dashboard"
   element={<ProtectedRoute allowedRoles={["customer", "manager"]}><Home /></ProtectedRoute>}
