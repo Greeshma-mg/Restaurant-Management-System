@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import API from "../api"; // Axios instance
+import API from "../utils/api";
 
 const MenuContext = createContext(null);
 
