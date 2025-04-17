@@ -2,8 +2,6 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-console.log("✅ API Base URL:", API_BASE_URL);  
-
 const API = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -11,113 +9,85 @@ const API = axios.create({
   },
 });
 
+// Attach token on every request
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-
-  console.log("🔑 Token:", token); 
-
-  if (token && token !== "null") {
+  // (Optionally) console.log("🔑 Token:", token);
+  if (token && token !== 'null') {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
+// Centralized error handling
 const handleError = (error) => {
   if (error.response) {
     console.error(`❌ API Error (${error.response.status}):`, error.response.data);
+    if (error.response.status === 401) {
+      // token invalid/expired → force logout
+      localStorage.removeItem('token');
+      // e.g. window.location.href = '/login';
+    }
     return Promise.reject(error.response.data);
   } else if (error.request) {
-    console.error("❌ No response from server:", error.request);
-    return Promise.reject({ message: "Server did not respond" });
+    console.error('❌ No response from server:', error.request);
+    return Promise.reject({ message: 'Server did not respond' });
   } else {
-    console.error("❌ Request Error:", error.message);
+    console.error('❌ Request Error:', error.message);
     return Promise.reject({ message: error.message });
   }
 };
 
 export const MenuService = {
-  getAllMenus: async () => {
-    try {
-      const response = await API.get('/menu');
-      return response.data;
-    } catch (error) {
-      return handleError(error);
-    }
-  },
-  getAllCategories: async () => {
-    try {
-      const response = await API.get('/menu/categories'); 
-      return response.data;
-    } catch (error) {
-      return handleError(error);
-    }
-  },
-  getItemsByCategory: async (category) => {
-    if (!category) return Promise.reject({ message: "Category is required" });
-
-    const normalizedCategory = category.toLowerCase().trim().replace(/\s+/g, '-').replace(/&/g, 'and');
-
-    try {
-      const response = await API.get(`/menu/category/${normalizedCategory}`);
-      return response.data;
-    } catch (error) {
-      return handleError(error);
-    }
-  },
-  createMenu: (menuData) => API.post('/menu', menuData),
-  updateMenu: (id, menuData) => API.put(`/menu/${id}`, menuData),
-  deleteMenu: (id) => API.delete(`/menu/${id}`),
-  getItem: (id) => API.get(`/menu/item/${id}`),
+  getAllMenus:    () => API.get('/menu').then(r => r.data).catch(handleError),
+  getAllCategories: () => API.get('/menu/categories').then(r => r.data).catch(handleError),
+  getItemsByCategory: (cat) => API.get(`/menu/category/${cat}`).then(r => r.data).catch(handleError),
+  createMenu:    (data) => API.post('/menu', data).then(r => r.data).catch(handleError),
+  updateMenu:    (id, data) => API.put(`/menu/${id}`, data).then(r => r.data).catch(handleError),
+  deleteMenu:    (id) => API.delete(`/menu/${id}`).then(r => r.data).catch(handleError),
+  getItem:       (id) => API.get(`/menu/item/${id}`).then(r => r.data).catch(handleError),
 };
 
-// ✅ Orders API
 export const OrderService = {
-  getAllOrders: () => API.get('/orders'),
-  getOrderById: (id) => API.get(`/orders/${id}`),
-  createOrder: (orderData) => API.post('/orders', orderData),
-  updateOrderStatus: (id, statusData) => API.patch(`/orders/${id}/status`, statusData),
-  deleteOrder: (id) => API.delete(`/orders/${id}`),
-  getOrderHistory: () => API.get('/orders/history'),
+  getAllOrders:    () => API.get('/orders').then(r => r.data).catch(handleError),
+  getOrderById:    (id) => API.get(`/orders/${id}`).then(r => r.data).catch(handleError),
+  createOrder:     (o)  => API.post('/orders', o).then(r => r.data).catch(handleError),
+  updateOrderStatus: (id,s) => API.patch(`/orders/${id}/status`, s).then(r => r.data).catch(handleError),
+  deleteOrder:     (id) => API.delete(`/orders/${id}`).then(r => r.data).catch(handleError),
+  getOrderHistory: ()    => API.get('/orders/history').then(r => r.data).catch(handleError),
 };
 
-// ✅ Reservations API
 export const ReservationService = {
-  getAllReservations: () => API.get('/reservations'),
-  getReservationById: (id) => API.get(`/reservations/${id}`),
-  createReservation: (reservationData) => API.post('/reservations', reservationData),
-  updateReservation: (id, reservationData) => API.patch(`/reservations/${id}`, reservationData),
-  deleteReservation: (id) => API.delete(`/reservations/${id}`),
-  getAvailableTimes: (date) => API.get('/reservations/available', { params: { date } }),
+  getAllReservations:  ()    => API.get('/reservations').then(r => r.data).catch(handleError),
+  getReservationById:  (id)  => API.get(`/reservations/${id}`).then(r => r.data).catch(handleError),
+  createReservation:   (d)   => API.post('/reservations', d).then(r => r.data).catch(handleError),
+  updateReservation:   (id,d) => API.patch(`/reservations/${id}`, d).then(r => r.data).catch(handleError),
+  deleteReservation:   (id)  => API.delete(`/reservations/${id}`).then(r => r.data).catch(handleError),
+  getAvailableTimes:   (date)=> API.get('/reservations/available',{ params:{ date }}).then(r => r.data).catch(handleError),
 };
 
-// ✅ Payments API
 export const PaymentService = {
-  getAllPayments: () => API.get('/payments'),
-  getPaymentById: (id) => API.get(`/payments/${id}`),
-  createPayment: (paymentData) => API.post('/payments', paymentData),
-  updatePayment: (id, paymentData) => API.patch(`/payments/${id}`),
-  deletePayment: (id) => API.delete(`/payments/${id}`),
+  getAllPayments: () => API.get('/payments').then(r => r.data).catch(handleError),
+  getPaymentById: (id) => API.get(`/payments/${id}`).then(r => r.data).catch(handleError),
+  createPayment:  (d)  => API.post('/payments', d).then(r => r.data).catch(handleError),
+  updatePayment:  (id,d)=> API.patch(`/payments/${id}`, d).then(r => r.data).catch(handleError),
+  deletePayment:  (id) => API.delete(`/payments/${id}`).then(r => r.data).catch(handleError),
 };
 
-// ✅ Reviews API
 export const ReviewService = {
-  getAllReviews: () => API.get('/reviews'),
-  getReviewById: (id) => API.get(`/reviews/${id}`),
-  createReview: (reviewData) => API.post('/reviews', reviewData),
-  updateReview: (id, reviewData) => API.patch(`/reviews/${id}`),
-  deleteReview: (id) => API.delete(`/reviews/${id}`),
+  getAllReviews: () => API.get('/reviews').then(r => r.data).catch(handleError),
+  getReviewById: (id) => API.get(`/reviews/${id}`).then(r => r.data).catch(handleError),
+  createReview:  (d)  => API.post('/reviews', d).then(r => r.data).catch(handleError),
+  updateReview:  (id,d)=> API.patch(`/reviews/${id}`, d).then(r => r.data).catch(handleError),
+  deleteReview:  (id) => API.delete(`/reviews/${id}`).then(r => r.data).catch(handleError),
 };
 
-// ✅ Authentication API
 export const AuthService = {
-  login: (credentials) => API.post('/auth/login', credentials),
-  register: (userData) => API.post('/auth/register', userData),
-  getUserProfile: () => API.get('/auth/profile'),
-  updateProfile: (userData) => API.patch('/auth/profile', userData),
-  logout: () => {
-    localStorage.removeItem('token');
-    return Promise.resolve();
-  },
+  login:       (creds) => API.post('/auth/login', creds).then(r => r.data).catch(handleError),
+  register:    (u)     => API.post('/auth/register', u).then(r => r.data).catch(handleError),
+  getUserProfile:      ()    => API.get('/auth/profile').then(r => r.data).catch(handleError),
+  updateProfile:       (u)   => API.patch('/auth/profile', u).then(r => r.data).catch(handleError),
+  logout:       ()     => { localStorage.removeItem('token'); return Promise.resolve(); },
 };
 
 export default API;

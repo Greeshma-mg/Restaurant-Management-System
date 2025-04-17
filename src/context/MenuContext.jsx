@@ -1,14 +1,12 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import API from "../utils/api";
+import API from "../utils/api"; // <- make sure this path is correct
 
 const MenuContext = createContext(null);
 
 export function useMenu() {
-  const context = useContext(MenuContext);
-  if (!context) {
-    throw new Error("useMenu must be used within a MenuProvider");
-  }
-  return context;
+  const ctx = useContext(MenuContext);
+  if (!ctx) throw new Error("useMenu must be inside a <MenuProvider>");
+  return ctx;
 }
 
 export function MenuProvider({ children }) {
@@ -22,88 +20,50 @@ export function MenuProvider({ children }) {
     setError(null);
 
     try {
-      const { data } = await API.get("/menu"); // Axios handles token automatically
-      console.log("✅ Processed menu data:", data);
+      const { data } = await API.get("/menu");
       setMenuItems(data);
 
-      const predefinedCategories = ["starters", "rice-breads", "desserts", "beverages", "main-course", "combo-meals"];
-      const extractedCategories = [...new Set(data.map(item => item.category))];
-      const mergedCategories = [...predefinedCategories, ...extractedCategories].filter(
-        (category, index, self) => category && self.indexOf(category) === index
-      );
-
-      setCategories(mergedCategories);
-      console.log("✅ Updated Categories:", mergedCategories);
-
-    } catch (error) {
-      console.error("❌ Error fetching menu items:", error.message);
-      setError(error.message);
+      const predefined = ["starters","rice-breads","desserts","beverages","main-course","combo-meals"];
+      const fromAPI = [...new Set(data.map(i => i.category))];
+      setCategories([...predefined, ...fromAPI].filter((c,i,self)=>c && self.indexOf(c)===i));
+    } catch (err) {
+      setError(err.message || "Failed to load menu");
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    console.log("🔄 MenuProvider: Initial fetch of menu items");
     fetchMenuItems();
   }, [fetchMenuItems]);
 
   const addMenuItem = async (formData) => {
-    try {
-      const { data } = await API.post("/menu", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      console.log("✅ Menu Item Added:", data);
-      setMenuItems(prevMenu => [...prevMenu, data]);
-      await fetchMenuItems();
-
-    } catch (error) {
-      console.error("❌ Error adding menu item:", error.message);
-      throw error;
-    }
+    await API.post("/menu", formData, { headers: { "Content-Type":"multipart/form-data" } });
+    await fetchMenuItems();
   };
 
   const updateMenuItem = async (id, formData) => {
-    try {
-      const { data } = await API.put(`/menu/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      console.log("✅ Menu Item Updated:", data);
-      setMenuItems(prevMenu => prevMenu.map(item => (item._id === id || item.id === id) ? data : item));
-      await fetchMenuItems();
-
-    } catch (error) {
-      console.error("❌ Error updating menu item:", error.message);
-      throw error;
-    }
+    await API.put(`/menu/${id}`, formData, { headers: { "Content-Type":"multipart/form-data" } });
+    await fetchMenuItems();
   };
 
   const deleteMenuItem = async (id) => {
-    try {
-      await API.delete(`/menu/${id}`);
-
-      console.log("✅ Menu Item Deleted:", id);
-      setMenuItems(prevMenu => prevMenu.filter(item => item._id !== id && item.id !== id));
-      await fetchMenuItems();
-
-    } catch (error) {
-      console.error("❌ Error deleting menu item:", error.message);
-      throw error;
-    }
+    await API.delete(`/menu/${id}`);
+    setMenuItems(mi => mi.filter(i => i._id !== id));
   };
 
-  const value = {
-    menuItems,
-    categories,
-    isLoading,
-    error,
-    fetchMenuItems,
-    addMenuItem,
-    updateMenuItem,
-    deleteMenuItem,
-  };
-
-  return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;
+  return (
+    <MenuContext.Provider value={{
+      menuItems,
+      categories,
+      isLoading,
+      error,
+      fetchMenuItems,
+      addMenuItem,
+      updateMenuItem,
+      deleteMenuItem
+    }}>
+      {children}
+    </MenuContext.Provider>
+  );
 }
