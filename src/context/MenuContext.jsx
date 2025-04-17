@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import API from "../api"; // Axios instance
 
-const API_URL = `${import.meta.env.VITE_API_URL}/menu`;
 const MenuContext = createContext(null);
 
 export function useMenu() {
@@ -20,38 +20,21 @@ export function MenuProvider({ children }) {
   const fetchMenuItems = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch(`${API_URL}?t=${Date.now()}`);
-      
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: Failed to fetch menu items`);
-      }
-      
-      const data = await response.json();
-      console.log("🔄 Raw API response:", data);
-      
-      let processedData = [];
-      if (Array.isArray(data)) {
-        processedData = data;
-      } else if (data?.data && Array.isArray(data.data)) {
-        processedData = data.data;
-      } else {
-        throw new Error("Unexpected API response structure");
-      }
-      
-      console.log("✅ Processed menu data:", processedData);
-      setMenuItems(processedData);
-      
+      const { data } = await API.get("/menu"); // Axios handles token automatically
+      console.log("✅ Processed menu data:", data);
+      setMenuItems(data);
+
       const predefinedCategories = ["starters", "rice-breads", "desserts", "beverages", "main-course", "combo-meals"];
-      const extractedCategories = [...new Set(processedData.map(item => item.category))];
+      const extractedCategories = [...new Set(data.map(item => item.category))];
       const mergedCategories = [...predefinedCategories, ...extractedCategories].filter(
         (category, index, self) => category && self.indexOf(category) === index
       );
-      
+
       setCategories(mergedCategories);
       console.log("✅ Updated Categories:", mergedCategories);
-      
+
     } catch (error) {
       console.error("❌ Error fetching menu items:", error.message);
       setError(error.message);
@@ -67,54 +50,30 @@ export function MenuProvider({ children }) {
 
   const addMenuItem = async (formData) => {
     try {
-      const response = await fetch(`${API_URL}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: formData,
+      const { data } = await API.post("/menu", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
-      
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: Failed to add menu item`);
-      }
-      
-      const newItem = await response.json();
-      console.log("✅ Menu Item Added:", newItem);
-      
-      setMenuItems(prevMenu => [...prevMenu, newItem]);
-      
+
+      console.log("✅ Menu Item Added:", data);
+      setMenuItems(prevMenu => [...prevMenu, data]);
       await fetchMenuItems();
-      
+
     } catch (error) {
       console.error("❌ Error adding menu item:", error.message);
-      throw error; 
+      throw error;
     }
   };
 
   const updateMenuItem = async (id, formData) => {
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: formData,
+      const { data } = await API.put(`/menu/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
-      
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: Failed to update menu item`);
-      }
-      
-      const updatedItem = await response.json();
-      console.log("✅ Menu Item Updated:", updatedItem);
-      
-      setMenuItems(prevMenu => 
-        prevMenu.map(item => (item._id === id || item.id === id) ? updatedItem : item)
-      );
-      
+
+      console.log("✅ Menu Item Updated:", data);
+      setMenuItems(prevMenu => prevMenu.map(item => (item._id === id || item.id === id) ? data : item));
       await fetchMenuItems();
-      
+
     } catch (error) {
       console.error("❌ Error updating menu item:", error.message);
       throw error;
@@ -123,29 +82,18 @@ export function MenuProvider({ children }) {
 
   const deleteMenuItem = async (id) => {
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: Failed to delete menu item`);
-      }
-      
+      await API.delete(`/menu/${id}`);
+
       console.log("✅ Menu Item Deleted:", id);
-      
       setMenuItems(prevMenu => prevMenu.filter(item => item._id !== id && item.id !== id));
-      
       await fetchMenuItems();
-      
+
     } catch (error) {
       console.error("❌ Error deleting menu item:", error.message);
       throw error;
     }
   };
-  
+
   const value = {
     menuItems,
     categories,
