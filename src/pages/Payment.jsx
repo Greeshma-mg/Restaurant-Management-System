@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/payment.css";
 import Footer from "../components/Footer";
+
 const Payment = ({ cart, subtotal, tax, total }) => {
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
   const [savedAddresses, setSavedAddresses] = useState([
-    { id: 1, address: "121 street,chalikkavattom.vytila,kochi" },
-    { id: 2, address: "456 Park Ave, kazhakkuttam,trivandrum" },
+    { id: 1, address: "121 street, Chalikkavattom, Vytila, Kochi" },
+    { id: 2, address: "456 Park Ave, Kazhakkuttam, Trivandrum" },
   ]);
   const [newAddressSelected, setNewAddressSelected] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("credit-card");
@@ -26,25 +27,31 @@ const Payment = ({ cart, subtotal, tax, total }) => {
     }
   }, [cart, navigate]);
 
-  // Handle Address Selection
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const handleSelectAddress = (selectedAddress) => {
     setAddress(selectedAddress);
     setNewAddressSelected(false);
   };
 
-  // Handle selecting "Use a new address"
   const handleSelectNewAddress = () => {
     setAddress("");
     setNewAddressSelected(true);
   };
 
-  // Handle Payment Method Change
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
   };
 
-  // Handle Order Placement
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!address) {
       alert("Please enter a delivery address");
       return;
@@ -55,11 +62,51 @@ const Payment = ({ cart, subtotal, tax, total }) => {
         alert("Please fill in all payment details");
         return;
       }
-    }
-    localStorage.removeItem("cart");
+      localStorage.removeItem("cart");
+      setOrderPlaced(true);
+    } else if (paymentMethod === "razorpay") {
+      try {
+        const response = await fetch("http://localhost:5000/api/razorpay/create-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount: total }),
+        });
 
-    // Show order confirmation
-    setOrderPlaced(true);
+        const orderData = await response.json();
+
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: "RestaurantPro",
+          description: "Order Payment",
+          order_id: orderData.id,
+          handler: function (response) {
+            localStorage.removeItem("cart");
+            setOrderPlaced(true);
+          },
+          prefill: {
+            name: nameOnCard || "Customer",
+            email: "customer@example.com",
+            contact: "9999999999",
+          },
+          theme: {
+            color: "#F37254",
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } catch (error) {
+        console.error("Razorpay Error:", error);
+        alert("Payment failed, please try again.");
+      }
+    } else {
+      localStorage.removeItem("cart");
+      setOrderPlaced(true);
+    }
   };
 
   const goToMenu = () => {
@@ -117,10 +164,7 @@ const Payment = ({ cart, subtotal, tax, total }) => {
               <div className="saved-addresses">
                 <h4>Saved Addresses</h4>
                 {savedAddresses.map((savedAddress) => (
-                  <div
-                    key={savedAddress.id}
-                    className="saved-address-item"
-                  >
+                  <div key={savedAddress.id} className="saved-address-item">
                     <input
                       type="radio"
                       name="savedAddress"
@@ -186,6 +230,17 @@ const Payment = ({ cart, subtotal, tax, total }) => {
                 />
                 <label htmlFor="cash">Cash on Delivery</label>
               </div>
+              <div className="payment-method-item">
+                <input
+                  type="radio"
+                  id="razorpay"
+                  name="paymentMethod"
+                  value="razorpay"
+                  checked={paymentMethod === "razorpay"}
+                  onChange={handlePaymentMethodChange}
+                />
+                <label htmlFor="razorpay">Pay with Razorpay</label>
+              </div>
             </div>
 
             {paymentMethod === "credit-card" && (
@@ -244,9 +299,8 @@ const Payment = ({ cart, subtotal, tax, total }) => {
           </div>
         </div>
       )}
-            <Footer />
+      <Footer />
     </div>
-    
   );
 };
 
