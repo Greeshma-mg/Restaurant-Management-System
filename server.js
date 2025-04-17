@@ -18,18 +18,30 @@ const restaurantRoutes = require("./routes/restaurantRoutes");
 const app = express();
 app.use(express.json());
 
+// Static file serving for uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Dynamic CORS Configuration
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : ["https://dazzling-sfogliatella-fee704.netlify.app"]; // default for now
 
 app.use(
   cors({
-    origin: "https://dazzling-sfogliatella-fee704.netlify.app", 
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-
+// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-management", {
     useNewUrlParser: true,
@@ -41,6 +53,7 @@ mongoose
     process.exit(1);
   });
 
+// Routes
 app.use("/api/users", userRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
@@ -53,8 +66,10 @@ app.get("/", (req, res) => {
   res.send("Welcome to RestaurantPro API");
 });
 
+// Error Handling Middleware
 app.use(notFound);
 app.use(errorHandler);
 
+// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
