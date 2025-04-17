@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import "../assets/EditMenu.css";
 import { useMenu } from "../context/MenuContext";
-const backendURL = "http://localhost:5000"; 
 
 const EditMenu = () => {
-  const { menuItems, addMenuItem, updateMenuItem, deleteMenuItem, isLoading } = useMenu();
+  // Get API URL from environment variable instead of hardcoded localhost
+  const backendURL = import.meta.env.VITE_API_URL?.replace('/api', '') || "http://localhost:5000";
+  
+  const { menuItems, addMenuItem, updateMenuItem, deleteMenuItem, isLoading, fetchMenuItems } = useMenu();
   const [newItem, setNewItem] = useState({
     name: "",
     description: "",
@@ -76,10 +78,9 @@ const EditMenu = () => {
       }
   
       console.log("✅ Item added/updated successfully!");
-  
-      // ✅ Fetch updated menu list
-      await fetchMenuItems(); 
-  
+      
+      // No need to call fetchMenuItems here as it's already called in addMenuItem and updateMenuItem
+      
       resetForm();
     } catch (error) {
       console.error("❌ Error adding/updating menu item:", error);
@@ -88,7 +89,6 @@ const EditMenu = () => {
     }
   };
   
-
   const handleDeleteItem = async (id) => {
     if (window.confirm("Are you sure you want to delete this menu item?")) {
       try {
@@ -155,6 +155,7 @@ const EditMenu = () => {
         <input type="file" name="image" accept="image/*" onChange={handleImageUpload} required={!editMode} />
         {editMode && existingImage && <img src={existingImage} alt="Current" width="100" />}
         <button type="submit" disabled={isSubmitting}>{editMode ? "Update Item" : "Add Item"}</button>
+        {editMode && <button type="button" onClick={handleCancelEdit}>Cancel</button>}
       </form>
 
       <h2>Existing Menu Items</h2>

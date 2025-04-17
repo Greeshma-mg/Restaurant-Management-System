@@ -51,15 +51,14 @@ const Login = () => {
       return;
     }
 
-    // ✅ Correctly set the API URL from .env
     const backendURL = import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:5000/api";
 
-    console.log("Backend URL:", backendURL); // Debugging
+    console.log("Backend URL:", backendURL); 
 
     try {
       const res = await axios.post(`${backendURL}/users/login`, { email, password });
 
-      console.log("API Response:", res.data); // Debugging
+      console.log("API Response:", res.data); 
 
       const { token, ...userData } = res.data;
 

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import API from "../utils/api"; // <- make sure this path is correct
+import API from "../utils/api"; 
 
 const MenuContext = createContext(null);
 
