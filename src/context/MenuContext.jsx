@@ -38,37 +38,36 @@ export function MenuProvider({ children }) {
   }, [fetchMenuItems]);
 
   const addMenuItem = async (formData) => {
-    const token = localStorage.getItem("token");
-    await API.post("/menu", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    await fetchMenuItems();
+    try {
+      await API.post("/menu", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      await fetchMenuItems();
+    } catch (error) {
+      console.error("Error adding menu item:", error);
+    }
   };
-
+  
   const updateMenuItem = async (id, formData) => {
-    const token = localStorage.getItem("token");
-    await API.put(`/menu/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    await fetchMenuItems();
+    try {
+      await API.put(`/menu/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      await fetchMenuItems();
+    } catch (error) {
+      console.error("Error updating menu item:", error);
+    }
   };
-
+  
   const deleteMenuItem = async (id) => {
-    const token = localStorage.getItem("token");
-    await API.delete(`/menu/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setMenuItems((mi) => mi.filter((i) => i._id !== id));
+    try {
+      await API.delete(`/menu/${id}`);
+      setMenuItems((mi) => mi.filter((i) => i._id !== id));
+    } catch (error) {
+      console.error("Error deleting menu item:", error);
+    }
   };
-
+  
   return (
     <MenuContext.Provider
       value={{
