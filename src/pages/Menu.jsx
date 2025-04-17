@@ -323,7 +323,7 @@ const Menu = () => {
         ? parseFloat(item.price.replace(/[^0-9.]/g, ""))
         : Number(item.price) || 0;
       return total + (price * (item.quantity || 1));
-    }, 0).toFixed(2);
+    }, 0);
   };
 
   const handleProceedToCheckout = (type) => {
