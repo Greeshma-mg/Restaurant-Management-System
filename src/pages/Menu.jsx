@@ -344,7 +344,6 @@ const Menu = () => {
     try {
       setLoading(true);
   
-      // Calculate subtotal just once as a number
       const subtotal = parseFloat(calculateTotal());
       const tax = parseFloat((subtotal * 0.1).toFixed(2));
       const total = parseFloat((subtotal + tax).toFixed(2));
@@ -398,15 +397,14 @@ const Menu = () => {
     );
   }
 
-  // Show Payment Component
   if (showPayment) {
     return (
       <Payment
         cart={cart}
         orderType="delivery"
-        subtotal={calculateTotal()}
-        tax={(parseFloat(calculateTotal()) * 0.1).toFixed(2)}
-        total={(parseFloat(calculateTotal()) + parseFloat((parseFloat(calculateTotal()) * 0.1).toFixed(2))).toFixed(2)}
+        subtotal={subtotal}
+        tax={tax}
+        total={total}
         onBack={handleBackFromCheckout}
         onSubmitOrder={submitOrder}
       />
@@ -419,14 +417,15 @@ const Menu = () => {
       <Reservation
         cart={cart}
         orderType="dine-in"
-        subtotal={calculateTotal()}
-        tax={(parseFloat(calculateTotal()) * 0.1).toFixed(2)}
-        total={(parseFloat(calculateTotal()) + parseFloat((parseFloat(calculateTotal()) * 0.1).toFixed(2))).toFixed(2)}
+        subtotal={subtotal}
+        tax={tax}
+        total={total}
         onBack={handleBackFromCheckout}
         onSubmitOrder={submitOrder}
       />
     );
   }
+  
 
   // Display Cart
   if (showCart) {
