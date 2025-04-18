@@ -9,25 +9,23 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Simple and safer CORS config for deployed frontend
+// ✅ Updated CORS Configuration
 const allowedOrigins = [
   "https://dazzling-sfogliatella-fee704.netlify.app",
-  "http://localhost:3000", // Optional: for local dev
+  "http://localhost:3000" // Optional: for local development
 ];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: allowedOrigins,
     credentials: true,
   })
 );
 
+// ✅ Handle preflight requests (OPTIONS)
+app.options("*", cors());
+
+// ✅ Middleware
 app.use(express.json());
 
 // ✅ Serve static files
