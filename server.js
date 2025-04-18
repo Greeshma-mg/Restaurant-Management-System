@@ -9,13 +9,15 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(",")
-  : ["https://dazzling-sfogliatella-fee704.netlify.app"];
+// ✅ Simple and safer CORS config for deployed frontend
+const allowedOrigins = [
+  "https://dazzling-sfogliatella-fee704.netlify.app",
+  "http://localhost:3000", // Optional: for local dev
+];
 
 app.use(
   cors({
-    origin: (origin, callback) => {
+    origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -23,15 +25,15 @@ app.use(
       }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 app.use(express.json());
 
+// ✅ Serve static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// ✅ MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-management", {
     useNewUrlParser: true,
@@ -43,28 +45,24 @@ mongoose
     process.exit(1);
   });
 
-const userRoutes = require("./routes/userRoutes");
-const menuRoutes = require("./routes/menuRoutes");
-const orderRoutes = require("./routes/orderRoutes");
-const reservationRoutes = require("./routes/reservationRoutes");
-const paymentRoutes = require("./routes/paymentRoutes");
-const reviewRoutes = require("./routes/reviewRoutes");
-const restaurantRoutes = require("./routes/restaurantRoutes");
+// ✅ Routes
+app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/menu", require("./routes/menuRoutes"));
+app.use("/api/orders", require("./routes/orderRoutes"));
+app.use("/api/reservations", require("./routes/reservationRoutes"));
+app.use("/api/payments", require("./routes/paymentRoutes"));
+app.use("/api/reviews", require("./routes/reviewRoutes"));
+app.use("/api/restaurants", require("./routes/restaurantRoutes"));
 
-app.use("/api/users", userRoutes);
-app.use("/api/menu", menuRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/reservations", reservationRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/reviews", reviewRoutes);
-app.use("/api/restaurants", restaurantRoutes);
-
+// ✅ Root route
 app.get("/", (req, res) => {
   res.send("✅ Welcome to RestaurantPro API");
 });
 
+// ✅ Error handlers
 app.use(notFound);
 app.use(errorHandler);
 
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
