@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// ✅ Use Vite-style environment variable (for React Vite)
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const API = axios.create({
@@ -10,7 +9,6 @@ const API = axios.create({
   },
 });
 
-// ✅ Attach token to every request
 API.interceptors.request.use((config) => {
   try {
     const user = localStorage.getItem("user")
@@ -25,14 +23,12 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ Centralized Error Handler
 const handleError = (error) => {
   if (error.response) {
     console.error(`❌ API Error (${error.response.status}):`, error.response.data);
     if (error.response.status === 401) {
       localStorage.removeItem("user");
-      // Optionally redirect:
-      // window.location.href = "/login";
+     
     }
     return Promise.reject(error.response.data);
   } else if (error.request) {
