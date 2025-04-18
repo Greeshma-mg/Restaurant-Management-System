@@ -21,7 +21,7 @@ exports.registerUser = async (req, res) => {
     const user = await User.create({
       name,
       email,
-      password: hashedPassword, // 🔹 Ensure hashed password is stored
+      password: hashedPassword, 
       role
     });
 
@@ -38,7 +38,7 @@ exports.registerUser = async (req, res) => {
 };
 
 
-// ✅ Login User
+
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 

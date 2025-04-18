@@ -9,7 +9,6 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Place CORS at the very top
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
   : ["https://dazzling-sfogliatella-fee704.netlify.app"];
@@ -17,9 +16,10 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.error(`❌ CORS blocked origin: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -29,13 +29,10 @@ app.use(
   })
 );
 
-// ✅ Then use express.json and other middleware
 app.use(express.json());
 
-// ✅ Static file serving (after CORS)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-management", {
     useNewUrlParser: true,
@@ -43,11 +40,10 @@ mongoose
   })
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => {
-    console.error("❌ Database Connection Error:", err.message);
+    console.error("❌ MongoDB Connection Error:", err.message);
     process.exit(1);
   });
 
-// ✅ Routes
 const userRoutes = require("./routes/userRoutes");
 const menuRoutes = require("./routes/menuRoutes");
 const orderRoutes = require("./routes/orderRoutes");
@@ -65,13 +61,11 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/restaurants", restaurantRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Welcome to RestaurantPro API");
+  res.send("✅ Welcome to RestaurantPro API");
 });
 
-// ✅ Error Handling Middleware
 app.use(notFound);
 app.use(errorHandler);
 
-// ✅ Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
