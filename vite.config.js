@@ -6,5 +6,5 @@ export default defineConfig({
   css: {
     postcss: 'postcss.config.cjs',
   },
-  base: './'  // Add this line to use relative paths
+  base: './'  
 })
