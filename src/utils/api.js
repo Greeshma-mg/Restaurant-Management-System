@@ -46,8 +46,20 @@ export const MenuService = {
   getAllMenus: () => API.get("/menu").then(r => r.data).catch(handleError),
   getAllCategories: () => API.get("/menu/categories").then(r => r.data).catch(handleError),
   getItemsByCategory: (cat) => API.get(`/menu/category/${cat}`).then(r => r.data).catch(handleError),
-  createMenu: (data) => API.post("/menu", data).then(r => r.data).catch(handleError),
-  updateMenu: (id, data) => API.put(`/menu/${id}`, data).then(r => r.data).catch(handleError),
+  createMenu: (data) => {
+    const config = {};
+    if (data instanceof FormData) {
+      config.headers = { 'Content-Type': undefined };
+    }
+    return API.post("/menu", data, config).then(r => r.data).catch(handleError);
+  },
+  updateMenu: (id, data) => {
+    const config = {};
+    if (data instanceof FormData) {
+      config.headers = { 'Content-Type': undefined };
+    }
+    return API.put(`/menu/${id}`, data, config).then(r => r.data).catch(handleError);
+  },
   deleteMenu: (id) => API.delete(`/menu/${id}`).then(r => r.data).catch(handleError),
   getItem: (id) => API.get(`/menu/item/${id}`).then(r => r.data).catch(handleError),
 };

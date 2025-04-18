@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import API from "../utils/api";
+import { MenuService } from "../utils/api"; // Import the service, not the API instance
 
 const MenuContext = createContext(null);
 
@@ -20,7 +20,7 @@ export function MenuProvider({ children }) {
     setError(null);
 
     try {
-      const { data } = await API.get("/menu");
+      const data = await MenuService.getAllMenus();
       setMenuItems(data);
 
       const predefined = ["starters", "rice-breads", "desserts", "beverages", "main-course", "combo-meals"];
@@ -39,36 +39,59 @@ export function MenuProvider({ children }) {
 
   const addMenuItem = async (formData) => {
     try {
-      await API.post("/menu", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      // Use FormData for file uploads
+      const formDataObj = new FormData();
+      
+      // Add all form fields to FormData
+      Object.keys(formData).forEach(key => {
+        if (key === 'image' && formData[key] instanceof File) {
+          formDataObj.append('image', formData[key]);
+        } else {
+          formDataObj.append(key, formData[key]);
+        }
       });
+      
+      // Use the MenuService instead of direct API calls
+      await MenuService.createMenu(formDataObj);
       await fetchMenuItems();
+      return true;
     } catch (error) {
-      console.error("Add Menu - Server error:", error.response?.data || error.message);
+      console.error("Add Menu - Server error:", error);
+      return false;
     }
   };
 
   const updateMenuItem = async (id, formData) => {
     try {
-      await API.put(`/menu/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      // Use FormData for file uploads
+      const formDataObj = new FormData();
+      
+      // Add all form fields to FormData
+      Object.keys(formData).forEach(key => {
+        if (key === 'image' && formData[key] instanceof File) {
+          formDataObj.append('image', formData[key]);
+        } else {
+          formDataObj.append(key, formData[key]);
+        }
       });
+      
+      await MenuService.updateMenu(id, formDataObj);
       await fetchMenuItems();
+      return true;
     } catch (error) {
-      console.error("Update Menu - Server error:", error.response?.data || error.message);
+      console.error("Update Menu - Server error:", error);
+      return false;
     }
   };
 
   const deleteMenuItem = async (id) => {
     try {
-      await API.delete(`/menu/${id}`);
+      await MenuService.deleteMenu(id);
       setMenuItems((mi) => mi.filter((i) => i._id !== id));
+      return true;
     } catch (error) {
-      console.error("Delete Menu - Server error:", error.response?.data || error.message);
+      console.error("Delete Menu - Server error:", error);
+      return false;
     }
   };
 
