@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, Navigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../assets/login.css";
 import googleLogo from "/images/google.png";
 
@@ -12,16 +12,17 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  // Read user from localStorage safely
   const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     console.log("Stored User in Login Page:", storedUser);
-  }, [storedUser]);
-
-  if (storedUser) {
-    return storedUser.role === "admin" ? <Navigate to="/admin/dashboard" /> : <Navigate to="/dashboard" />;
-  }
+    // Redirect only if both token and user are available
+    if (storedUser && token) {
+      const redirectPath = storedUser.role === "admin" ? "/admin/dashboard" : "/dashboard";
+      navigate(redirectPath);
+    }
+  }, []);
 
   const handleGoogleSignIn = async () => {
     try {
@@ -35,6 +36,7 @@ const Login = () => {
       };
 
       localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("token", "mock-google-token");
       console.log("User stored after Google Sign-In:", localStorage.getItem("user"));
       navigate("/dashboard");
     } catch (error) {
@@ -53,12 +55,12 @@ const Login = () => {
 
     const backendURL = import.meta.env.VITE_API_URL;
 
-    console.log("Backend URL:", backendURL); 
+    console.log("Backend URL:", backendURL);
 
     try {
       const res = await axios.post(`${backendURL}/users/login`, { email, password });
 
-      console.log("API Response:", res.data); 
+      console.log("API Response:", res.data);
 
       const { token, ...userData } = res.data;
 
@@ -77,8 +79,10 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      {/* Background Image */}
-      <div className="background-image" style={{ backgroundImage: "url('/images/login.jpg')" }}>
+      <div
+        className="background-image"
+        style={{ backgroundImage: "url('/images/login.jpg')" }}
+      >
         <div className="overlay">
           <div className="login-box">
             <h1 className="brand">Savory Elegance</h1>
