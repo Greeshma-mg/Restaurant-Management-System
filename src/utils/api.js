@@ -43,22 +43,42 @@ const handleError = (error) => {
   }
 };
 
+// ✅ Helper to attach token
+const getAuthHeaders = (isForm = false) => {
+  const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  const token = user?.token;
+
+  return {
+    ...(isForm ? { "Content-Type": "multipart/form-data" } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
+
+// ✅ Menu Service
 export const MenuService = {
   getAllMenus: () => API.get("/menu").then(r => r.data).catch(handleError),
   getAllCategories: () => API.get("/menu/categories").then(r => r.data).catch(handleError),
   getItemsByCategory: (cat) => API.get(`/menu/category/${cat}`).then(r => r.data).catch(handleError),
   getItem: (id) => API.get(`/menu/item/${id}`).then(r => r.data).catch(handleError),
-  createMenu: (data) =>
-    API.post("/menu", data, {
-      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : {},
-    }).then(r => r.data).catch(handleError),
-  updateMenu: (id, data) =>
-    API.put(`/menu/${id}`, data, {
-      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : {},
-    }).then(r => r.data).catch(handleError),
+
+  createMenu: (data) => {
+    const isForm = data instanceof FormData;
+    return API.post("/menu", data, {
+      headers: getAuthHeaders(isForm),
+    }).then(r => r.data).catch(handleError);
+  },
+
+  updateMenu: (id, data) => {
+    const isForm = data instanceof FormData;
+    return API.put(`/menu/${id}`, data, {
+      headers: getAuthHeaders(isForm),
+    }).then(r => r.data).catch(handleError);
+  },
+
   deleteMenu: (id) => API.delete(`/menu/${id}`).then(r => r.data).catch(handleError),
 };
 
+// ✅ Order Service
 export const OrderService = {
   getAllOrders: () => API.get("/orders").then(r => r.data).catch(handleError),
   getOrderById: (id) => API.get(`/orders/${id}`).then(r => r.data).catch(handleError),
@@ -68,6 +88,7 @@ export const OrderService = {
   getOrderHistory: () => API.get("/orders/history").then(r => r.data).catch(handleError),
 };
 
+// ✅ Reservation Service
 export const ReservationService = {
   getAllReservations: () => API.get("/reservations").then(r => r.data).catch(handleError),
   getReservationById: (id) => API.get(`/reservations/${id}`).then(r => r.data).catch(handleError),
@@ -78,6 +99,7 @@ export const ReservationService = {
     API.get("/reservations/available", { params: { date } }).then(r => r.data).catch(handleError),
 };
 
+// ✅ Payment Service
 export const PaymentService = {
   getAllPayments: () => API.get("/payments").then(r => r.data).catch(handleError),
   getPaymentById: (id) => API.get(`/payments/${id}`).then(r => r.data).catch(handleError),
@@ -86,6 +108,7 @@ export const PaymentService = {
   deletePayment: (id) => API.delete(`/payments/${id}`).then(r => r.data).catch(handleError),
 };
 
+// ✅ Review Service
 export const ReviewService = {
   getAllReviews: () => API.get("/reviews").then(r => r.data).catch(handleError),
   getReviewById: (id) => API.get(`/reviews/${id}`).then(r => r.data).catch(handleError),
@@ -94,6 +117,7 @@ export const ReviewService = {
   deleteReview: (id) => API.delete(`/reviews/${id}`).then(r => r.data).catch(handleError),
 };
 
+// ✅ Auth Service
 export const AuthService = {
   login: (creds) => API.post("/users/login", creds).then(r => r.data).catch(handleError),
   register: (u) => API.post("/users/register", u).then(r => r.data).catch(handleError),
