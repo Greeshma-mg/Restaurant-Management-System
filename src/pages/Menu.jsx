@@ -95,14 +95,14 @@ const Menu = () => {
       try {
         const menuResponse = await MenuService.getAllMenus();
         console.log("✅ Full Menu API Response:", JSON.stringify(menuResponse, null, 2));
-        
+  
         let menuData = [];
         if (Array.isArray(menuResponse)) {
           menuData = menuResponse;
         } else if (menuResponse && Array.isArray(menuResponse.data)) {
           menuData = menuResponse.data;
         }
-        
+  
         const formattedMenuItems = menuData.map(item => ({
           id: item._id || item.id,
           name: item.name,
@@ -112,15 +112,15 @@ const Menu = () => {
           image: item.image,
           isAvailable: item.isAvailable !== false && item.availability !== false
         }));
-        
+  
         setMenuItems(formattedMenuItems);
-
+  
         let categoriesList = [];
-
+  
         try {
           const categoriesResponse = await MenuService.getAllCategories();
           console.log("✅ Raw categories data:", categoriesResponse);
-
+  
           if (Array.isArray(categoriesResponse) && categoriesResponse.length > 0) {
             categoriesList = categoriesResponse.map((cat) => cat.trim().toLowerCase());
           } else {
@@ -129,21 +129,26 @@ const Menu = () => {
         } catch (err) {
           console.error("❌ Error fetching categories, extracting from menu items:", err);
         }
-
+  
+        // If categories list is empty, extract categories from menu items
         if (categoriesList.length === 0 && formattedMenuItems.length > 0) {
           categoriesList = [...new Set(formattedMenuItems.map((item) => item.category?.trim().toLowerCase()).filter(Boolean))];
         }
-
+  
+        // If still no categories, fallback to default categories
         if (categoriesList.length === 0) {
           console.warn("⚠️ No categories found, using static fallback.");
           categoriesList = ["starters", "rice-breads", "main-course", "desserts", "beverages", "combo-meals"];
         }
-
+  
+        // Set the categories after ensuring proper fallback or extraction
         setCategories(categoriesList);
-        
+  
+        // If a category is provided, call the view handler
         if (category) {
           handleViewCategory(category);
         }
+  
       } catch (error) {
         console.error("❌ Error fetching menu data:", error);
         setError("Failed to load menu. Please try again.");
@@ -152,9 +157,10 @@ const Menu = () => {
         setLoading(false);
       }
     };
-
+  
     fetchMenuData();
   }, []);
+  
   
   useEffect(() => {
     if (category) {
