@@ -1,3 +1,5 @@
+// server.js
+
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -6,61 +8,71 @@ const path = require("path");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
-
 const app = express();
 
-// ✅ Updated CORS Configuration
+// ——— CORS Setup ———
 const allowedOrigins = [
   "https://dazzling-sfogliatella-fee704.netlify.app",
-  "http://localhost:3000" // Optional: for local development
+  "http://localhost:3000"
 ];
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: (origin, callback) => {
+    // 1) Allow requests from no-origin (mobile apps, curl, Postman, etc.)
+    if (!origin) return callback(null, true);
 
-// ✅ Handle preflight requests (OPTIONS)
+    // 2) Exact match whitelist
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // 3) Allow any Netlify preview subdomain: *.netlify.app
+    if (/^https:\/\/[a-z0-9-]+\.netlify\.app$/.test(origin)) {
+      return callback(null, true);
+    }
+
+    // 4) Reject all others
+    return callback(new Error("Not allowed by CORS"), false);
+  },
+  credentials: true,
+  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"]
+}));
+
+// Handle preflight OPTION requests
 app.options("*", cors());
 
-// ✅ Middleware
+// ——— JSON + Static Middleware ———
 app.use(express.json());
-
-// ✅ Serve static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ MongoDB connection
+// ——— MongoDB Connection ———
 mongoose
-  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/restaurant-management", {
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => {
+  .catch(err => {
     console.error("❌ MongoDB Connection Error:", err.message);
     process.exit(1);
   });
 
-// ✅ Routes
+// ——— Routes ———
 app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/menu", require("./routes/menuRoutes"));
-app.use("/api/orders", require("./routes/orderRoutes"));
-app.use("/api/reservations", require("./routes/reservationRoutes"));
-app.use("/api/payments", require("./routes/paymentRoutes"));
-app.use("/api/reviews", require("./routes/reviewRoutes"));
-app.use("/api/restaurants", require("./routes/restaurantRoutes"));
+app.use("/api/menu",  require("./routes/menuRoutes"));
+app.use("/api/orders",  require("./routes/orderRoutes"));
+app.use("/api/reservations",  require("./routes/reservationRoutes"));
+app.use("/api/payments",  require("./routes/paymentRoutes"));
+app.use("/api/reviews",  require("./routes/reviewRoutes"));
+app.use("/api/restaurants",  require("./routes/restaurantRoutes"));
 
-// ✅ Root route
-app.get("/", (req, res) => {
-  res.send("✅ Welcome to RestaurantPro API");
-});
+app.get("/", (req, res) => res.send("✅ Welcome to RestaurantPro API"));
 
-// ✅ Error handlers
+// ——— Error Handlers ———
 app.use(notFound);
 app.use(errorHandler);
 
-// ✅ Start server
+// ——— Start Server ———
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
