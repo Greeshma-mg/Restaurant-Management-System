@@ -9,67 +9,21 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Improved CORS Configuration for Netlify
+// ✅ Updated CORS Configuration
 const allowedOrigins = [
   "https://dazzling-sfogliatella-fee704.netlify.app",
-  "https://6808e4ac66d7e16f9237553c--dazzling-sfogliatella-fee704.netlify.app", 
-  "http://localhost:3000" // For local development
+  "http://localhost:3000" // Optional: for local development
 ];
 
 app.use(
   cors({
-    origin: function(origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      
-      // Check if origin is in our explicit allowlist
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      
-      // Check if origin matches Netlify deploy preview pattern
-      const netlifyPreviewPattern = /^https:\/\/[a-z0-9]+-+-dazzling-sfogliatella-fee704\.netlify\.app$/;
-      if (netlifyPreviewPattern.test(origin)) {
-        return callback(null, true);
-      }
-      
-      return callback(null, false);
-    },
+    origin: allowedOrigins,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   })
 );
 
 // ✅ Handle preflight requests (OPTIONS)
 app.options("*", cors());
-
-// ✅ Set CORS headers directly for any issues with the cors package
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  // Check if origin should be allowed
-  if (!origin) {
-    return next();
-  }
-  
-  // Check explicit allowlist
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  } else {
-    // Check pattern match
-    const netlifyPreviewPattern = /^https:\/\/[a-z0-9]+-+-dazzling-sfogliatella-fee704\.netlify\.app$/;
-    if (netlifyPreviewPattern.test(origin)) {
-      res.header('Access-Control-Allow-Origin', origin);
-    }
-  }
-
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  
-  next();
-});
 
 // ✅ Middleware
 app.use(express.json());
