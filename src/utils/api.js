@@ -1,4 +1,3 @@
-// src/utils/api.js
 import axios from "axios";
 
 // Set the base URL from the environment variable or default to localhost
@@ -8,7 +7,7 @@ console.log("✅ Backend URL:", API_BASE_URL);
 // Create an axios instance with the base URL
 const API = axios.create({
   baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
+  // Removed default "Content-Type" header here
 });
 
 // Interceptor to add the JWT token to each request if available
