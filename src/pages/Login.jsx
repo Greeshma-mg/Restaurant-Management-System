@@ -16,18 +16,14 @@ const Login = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    console.log("Stored User in Login Page:", storedUser);
-    // Redirect only if both token and user are available
     if (storedUser && token) {
       const redirectPath = storedUser.role === "admin" ? "/admin/dashboard" : "/dashboard";
       navigate(redirectPath);
     }
-  }, [storedUser, token, navigate]);
+  }, []);
 
   const handleGoogleSignIn = async () => {
     try {
-      console.log("Attempting Google Sign-In...");
-
       const userData = {
         id: "google123",
         name: "Google User",
@@ -37,10 +33,8 @@ const Login = () => {
 
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("token", "mock-google-token");
-      console.log("User stored after Google Sign-In:", localStorage.getItem("user"));
       navigate("/dashboard");
     } catch (error) {
-      console.error("Sign-in failed:", error);
       setError("Google sign-in failed");
     }
   };
@@ -55,27 +49,25 @@ const Login = () => {
 
     const backendURL = import.meta.env.VITE_API_URL;
 
-    console.log("Backend URL:", backendURL);
-
     try {
-      const res = await axios.post(`${backendURL}/users/login`, { email, password });
+      const res = await axios.post(
+        `${backendURL}/users/login`,
+        { email, password },
+        {
+          withCredentials: true, // ✅ Required for cookies/token sharing
+        }
+      );
 
-      console.log("API Response:", res.data);
+      const { token, ...userData } = res.data;
 
-      // Merge the token into the user data
-      const fullUser = { ...res.data, token: res.data.token };
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
 
-      // Store user object with token
-      localStorage.setItem("user", JSON.stringify(fullUser));
-
-      console.log("User stored after login:", localStorage.getItem("user"));
-
-      // Navigate to the appropriate dashboard based on role
-      const redirectPath = fullUser.role === "admin" ? "/admin/dashboard" : "/dashboard";
+      const redirectPath = userData.role === "admin" ? "/admin/dashboard" : "/dashboard";
       navigate(redirectPath);
     } catch (error) {
       setError(error.response?.data?.message || "Login failed");
-      console.error("Error:", error.response?.data || error.message);
+      console.error("Login Error:", error.response?.data || error.message);
     }
   };
 
