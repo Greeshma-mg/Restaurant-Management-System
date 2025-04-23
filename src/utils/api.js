@@ -116,7 +116,6 @@ export const PaymentService = {
   deletePayment: (id) => API.delete(`/payments/${id}`).then((r) => r.data).catch(handleError),
 };
 
-// Review Service: functions to interact with review-related API endpoints
 export const ReviewService = {
   getAllReviews: () => API.get("/reviews").then((r) => r.data).catch(handleError),
   getReviewById: (id) => API.get(`/reviews/${id}`).then((r) => r.data).catch(handleError),
