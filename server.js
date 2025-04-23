@@ -13,7 +13,7 @@ const app = express();
 // ——— CORS Setup ———
 const allowedOrigins = [
   "https://dazzling-sfogliatella-fee704.netlify.app",
-  "http://localhost:3000"
+  "http://localhost:5173"
 ];
 
 app.use(cors({
