@@ -12,8 +12,8 @@ const app = express();
 
 // ——— CORS Setup ———
 const allowedOrigins = [
-  "https://dazzling-sfogliatella-fee704.netlify.app",
-  "http://localhost:5173"
+  "https://dazzling-sfogliatella-fee704.netlify.app",  // Production URL
+  "http://localhost:5173",  // Local development URL
 ];
 
 app.use(cors({
@@ -34,12 +34,12 @@ app.use(cors({
     // 4) Reject all others
     return callback(new Error("Not allowed by CORS"), false);
   },
-  credentials: true,
-  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"]
+  credentials: true,  // Allow credentials (cookies, headers, etc.) for cross-origin requests
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],  // Allow headers for content-type and authorization
 }));
 
-// Handle preflight OPTION requests
+// Handle preflight OPTIONS requests
 app.options("*", cors());
 
 // ——— JSON + Static Middleware ———
@@ -53,19 +53,19 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log("✅ MongoDB Connected"))
-  .catch(err => {
+  .catch((err) => {
     console.error("❌ MongoDB Connection Error:", err.message);
     process.exit(1);
   });
 
 // ——— Routes ———
 app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/menu",  require("./routes/menuRoutes"));
-app.use("/api/orders",  require("./routes/orderRoutes"));
-app.use("/api/reservations",  require("./routes/reservationRoutes"));
-app.use("/api/payments",  require("./routes/paymentRoutes"));
-app.use("/api/reviews",  require("./routes/reviewRoutes"));
-app.use("/api/restaurants",  require("./routes/restaurantRoutes"));
+app.use("/api/menu", require("./routes/menuRoutes"));
+app.use("/api/orders", require("./routes/orderRoutes"));
+app.use("/api/reservations", require("./routes/reservationRoutes"));
+app.use("/api/payments", require("./routes/paymentRoutes"));
+app.use("/api/reviews", require("./routes/reviewRoutes"));
+app.use("/api/restaurants", require("./routes/restaurantRoutes"));
 
 app.get("/", (req, res) => res.send("✅ Welcome to RestaurantPro API"));
 
