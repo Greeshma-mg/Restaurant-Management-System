@@ -22,7 +22,7 @@ const Login = () => {
       const redirectPath = storedUser.role === "admin" ? "/admin/dashboard" : "/dashboard";
       navigate(redirectPath);
     }
-  }, []);
+  }, [storedUser, token, navigate]);
 
   const handleGoogleSignIn = async () => {
     try {
@@ -62,14 +62,16 @@ const Login = () => {
 
       console.log("API Response:", res.data);
 
-      const { token, ...userData } = res.data;
+      // Merge the token into the user data
+      const fullUser = { ...res.data, token: res.data.token };
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(userData));
+      // Store user object with token
+      localStorage.setItem("user", JSON.stringify(fullUser));
 
       console.log("User stored after login:", localStorage.getItem("user"));
 
-      const redirectPath = userData.role === "admin" ? "/admin/dashboard" : "/dashboard";
+      // Navigate to the appropriate dashboard based on role
+      const redirectPath = fullUser.role === "admin" ? "/admin/dashboard" : "/dashboard";
       navigate(redirectPath);
     } catch (error) {
       setError(error.response?.data?.message || "Login failed");
