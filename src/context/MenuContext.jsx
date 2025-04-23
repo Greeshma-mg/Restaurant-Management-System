@@ -23,10 +23,27 @@ export function MenuProvider({ children }) {
       const data = await MenuService.getAllMenus();
       setMenuItems(data);
 
-      const predefined = ["starters", "rice-breads", "desserts", "beverages", "main-course", "combo-meals"];
-      const fromAPI = [...new Set(data.map(i => i.category))];
-      setCategories([...predefined, ...fromAPI].filter((c, i, self) => c && self.indexOf(c) === i));
+      const predefined = [
+        "starters",
+        "rice-breads",
+        "desserts",
+        "beverages",
+        "main-course",
+        "combo-meals"
+      ];
+
+      const fromAPI = [...new Set(
+        data
+          .map(i => i.category?.trim().toLowerCase())
+          .filter(Boolean)
+      )];
+
+      const combinedCategories = [...predefined, ...fromAPI];
+      const uniqueCategories = [...new Set(combinedCategories)];
+
+      setCategories(uniqueCategories);
     } catch (err) {
+      console.error("Fetch Menu Error:", err);
       setError(err.message || "Failed to load menu");
     } finally {
       setIsLoading(false);
@@ -39,19 +56,16 @@ export function MenuProvider({ children }) {
 
   const addMenuItem = async (formData) => {
     try {
-      // Use FormData for file uploads
       const formDataObj = new FormData();
-      
-      // Add all form fields to FormData
+
       Object.keys(formData).forEach(key => {
-        if (key === 'image' && formData[key] instanceof File) {
-          formDataObj.append('image', formData[key]);
+        if (key === "image" && formData[key] instanceof File) {
+          formDataObj.append("image", formData[key]);
         } else {
           formDataObj.append(key, formData[key]);
         }
       });
-      
-      // Use the MenuService instead of direct API calls
+
       await MenuService.createMenu(formDataObj);
       await fetchMenuItems();
       return true;
@@ -63,18 +77,16 @@ export function MenuProvider({ children }) {
 
   const updateMenuItem = async (id, formData) => {
     try {
-      // Use FormData for file uploads
       const formDataObj = new FormData();
-      
-      // Add all form fields to FormData
+
       Object.keys(formData).forEach(key => {
-        if (key === 'image' && formData[key] instanceof File) {
-          formDataObj.append('image', formData[key]);
+        if (key === "image" && formData[key] instanceof File) {
+          formDataObj.append("image", formData[key]);
         } else {
           formDataObj.append(key, formData[key]);
         }
       });
-      
+
       await MenuService.updateMenu(id, formDataObj);
       await fetchMenuItems();
       return true;

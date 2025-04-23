@@ -49,6 +49,7 @@ const getAuthHeaders = (isForm = false) => {
   const token = user?.token;
 
   return {
+    
     ...(isForm ? { "Content-Type": "multipart/form-data" } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };

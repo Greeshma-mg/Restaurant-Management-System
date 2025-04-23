@@ -226,12 +226,10 @@ const Menu = () => {
         }
       }
 
-      // Add static items that don't exist in API items
       const staticItems = allItems.filter(
         item => item.category?.trim().toLowerCase() === normalizedCategory
       );
       
-      // Only add static items that don't match any API items by name
       const uniqueStaticItems = staticItems.filter(staticItem => {
         return !itemsToShow.some(existingItem => 
           existingItem.name.toLowerCase() === staticItem.name.toLowerCase()
@@ -362,7 +360,6 @@ const Menu = () => {
         ...orderDetails
       };
   
-      // now send orderData to backend...
     } catch (err) {
       console.error("❌ Submit order error:", err);
     } finally {
