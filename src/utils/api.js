@@ -28,7 +28,12 @@ const handleError = (error) => {
   if (error.response) {
     console.error(`❌ API Error (${error.response.status}):`, error.response.data);
 
-    if (error.response.status === 401) {
+    // Modified this section to handle permission changes better
+    // Only logout for authentication failures, not for permission-related 401s
+    if (error.response.status === 401 && 
+        (error.response.data?.message?.includes("invalid token") || 
+         error.response.data?.message?.includes("expired") || 
+         error.response.data?.message?.includes("authentication"))) {
       localStorage.removeItem("user");
       window.location.href = "/login";
     }
@@ -124,6 +129,20 @@ export const AuthService = {
   register: (u) => API.post("/users/register", u).then(r => r.data).catch(handleError),
   getUserProfile: () => API.get("/users/profile").then(r => r.data).catch(handleError),
   updateProfile: (u) => API.patch("/users/profile", u).then(r => r.data).catch(handleError),
+  refreshUserSession: async () => {
+    try {
+      const result = await API.post("/users/refresh-token").then(r => r.data);
+      if (result?.token) {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        user.token = result.token;
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+      return result;
+    } catch (err) {
+      console.error("Failed to refresh session:", err);
+      return handleError(err);
+    }
+  },
   logout: () => {
     localStorage.removeItem("user");
     return Promise.resolve();
