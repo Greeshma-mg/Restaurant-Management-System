@@ -54,7 +54,7 @@ const Login = () => {
         `${backendURL}/users/login`,
         { email, password },
         {
-          withCredentials: true, // ✅ Required for cookies/token sharing
+          withCredentials: true, 
         }
       );
 

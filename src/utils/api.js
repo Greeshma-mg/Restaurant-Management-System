@@ -1,16 +1,12 @@
 import axios from "axios";
 
-// Set the base URL from the environment variable or default to localhost
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 console.log("✅ Backend URL:", API_BASE_URL);
 
-// Create an axios instance with the base URL
 const API = axios.create({
   baseURL: API_BASE_URL,
-  // Removed default "Content-Type" header here
 });
 
-// Interceptor to add the JWT token to each request if available
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -19,12 +15,10 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Centralized error handler to catch errors across all API calls
 const handleError = (error) => {
   if (error.response) {
     console.error(`❌ API Error (${error.response.status}):`, error.response.data);
 
-    // If the error is a 401 (Unauthorized), log the user out
     if (error.response.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
@@ -40,7 +34,6 @@ const handleError = (error) => {
   }
 };
 
-// Helper to return the appropriate headers with or without token based on request type
 const getAuthHeaders = (isForm = false) => {
   const token = localStorage.getItem("token");
   return {
@@ -49,7 +42,6 @@ const getAuthHeaders = (isForm = false) => {
   };
 };
 
-// Menu Service: functions to interact with the menu-related API endpoints
 export const MenuService = {
   getAllMenus: () => API.get("/menu").then((r) => r.data).catch(handleError),
   getAllCategories: () => API.get("/menu/categories").then((r) => r.data).catch(handleError),
@@ -73,7 +65,6 @@ export const MenuService = {
   deleteMenu: (id) => API.delete(`/menu/${id}`).then((r) => r.data).catch(handleError),
 };
 
-// Auth Service: functions to interact with authentication-related API endpoints
 export const AuthService = {
   login: (creds) => API.post("/users/login", creds).then((r) => r.data).catch(handleError),
   register: (u) => API.post("/users/register", u).then((r) => r.data).catch(handleError),
@@ -85,7 +76,6 @@ export const AuthService = {
   getProfile: () => API.get("/users/profile").then((r) => r.data).catch(handleError),
 };
 
-// Order Service: functions to interact with orders API endpoints
 export const OrderService = {
   getAllOrders: () => API.get("/orders").then((r) => r.data).catch(handleError),
   getOrderById: (id) => API.get(`/orders/${id}`).then((r) => r.data).catch(handleError),
@@ -95,7 +85,6 @@ export const OrderService = {
   getOrderHistory: () => API.get("/orders/history").then((r) => r.data).catch(handleError),
 };
 
-// Reservation Service: functions to interact with reservation-related API endpoints
 export const ReservationService = {
   getAllReservations: () => API.get("/reservations").then((r) => r.data).catch(handleError),
   getReservationById: (id) => API.get(`/reservations/${id}`).then((r) => r.data).catch(handleError),
@@ -106,7 +95,6 @@ export const ReservationService = {
     API.get("/reservations/available", { params: { date } }).then((r) => r.data).catch(handleError),
 };
 
-// Payment Service: functions to interact with payment-related API endpoints
 export const PaymentService = {
   getAllPayments: () => API.get("/payments").then((r) => r.data).catch(handleError),
   getPaymentById: (id) => API.get(`/payments/${id}`).then((r) => r.data).catch(handleError),

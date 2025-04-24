@@ -15,13 +15,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Google Sign-In Function
 const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     console.log("User:", result.user);
     localStorage.setItem("user", JSON.stringify(result.user));
-    window.location.href = "/"; // Redirect after login
+    window.location.href = "/"; 
   } catch (error) {
     console.error("Google Sign-In Error:", error);
   }

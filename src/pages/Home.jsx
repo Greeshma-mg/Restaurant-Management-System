@@ -4,7 +4,6 @@ import "../assets/home.css";
 import AdminHome from "../components/AdminHome";
 import Footer from "../components/Footer";
 
-// Image Paths
 const images = {
   about: "/images/about.jpg",
   chef: "/images/chef.jpg",
@@ -46,7 +45,6 @@ const Home = () => {
     <div className="home-container">
       <h1>Welcome to Savory Elegance</h1>
 
-      {/* Hero Section */}
       <div className="image-container">
         <img src={images.craving} alt="Restaurant Banner" className="background-image" />
         <div className="image-overlay">
@@ -55,14 +53,12 @@ const Home = () => {
         </div>
       </div>
 
-      {/* About Section */}
       <div className="about-section">
         <h2>Our Story</h2>
         <p>Nestled in the heart of Vytila, Kochi, Savory Elegance is where fine dining meets a warm and inviting ambiance. Our carefully curated menu blends traditional flavors with modern culinary artistry, offering an unforgettable experience for every guest. Whether you're here for a romantic dinner, a family gathering, or a casual bite, our expert chefs and friendly staff ensure every meal is a delight. From handcrafted dishes to exquisite desserts, Savory Elegance is your go-to destination for an extraordinary dining experience..</p>
         <img src={images.about} alt="About Us" />
       </div>
 
-      {/* Featured Section */}
       <div className="featured-section">
         <h2>Today's Specials</h2>
         <div className="featured-items">
@@ -83,7 +79,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Chefs Section */}
       <div className="chefs-section">
         <h2>Meet Our Culinary Team</h2>
         <div className="chefs-container">
@@ -102,7 +97,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Reviews Section */}
       <div className="reviews-section" id="reviews">
         <h2>What Our Customers Say</h2>
         <div className="reviews-container">
@@ -124,7 +118,6 @@ const Home = () => {
         <button onClick={handleReviewsPopup} className="view-all-button">View All Reviews</button>
       </div>
 
-      {/* Popup Modal */}
       {showReviewsPopup && (
         <div className="popup-overlay">
           <div className="popup-content">

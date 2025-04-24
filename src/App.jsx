@@ -115,7 +115,6 @@ function App() {
 />
 
 
-          {/* Admin Routes */}
           <Route
             path="/admin/dashboard"
             element={<ProtectedRoute allowedRoles={["admin"]}><AdminHome /></ProtectedRoute>}
@@ -149,7 +148,6 @@ function App() {
             element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettings /></ProtectedRoute>}
           />
 
-          {/* Redirects for Old Paths */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/manage-orders" element={<Navigate to="/admin/manage-orders" replace />} />
           <Route path="/manage-reservations" element={<Navigate to="/admin/manage-reservations" replace />} />

@@ -18,7 +18,6 @@ const Orders = () => {
       return;
     }
 
-    // Fetch orders only once
     const fetchOrders = async () => {
       try {
         const savedOrders = JSON.parse(localStorage.getItem("userOrders") || "[]");

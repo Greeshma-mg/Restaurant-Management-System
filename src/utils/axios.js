@@ -11,7 +11,6 @@ const API = axios.create({
   },
 });
 
-// Request Interceptor - attach token
 API.interceptors.request.use(
   (req) => {
     const user = localStorage.getItem("user")
@@ -28,15 +27,11 @@ API.interceptors.request.use(
   }
 );
 
-// Response Interceptor - optional (can handle 401/403 logout here if needed)
 API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
       console.warn("Unauthorized. Possible logout triggered.");
-      // Optionally logout:
-      // localStorage.removeItem("user");
-      // window.location.href = "/login";
     }
     return Promise.reject(error);
   }

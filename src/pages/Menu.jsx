@@ -17,12 +17,10 @@ const defaultImages = {
 
 const generalFallbackImage = "/images/default.jpg";
 const getImageUrl = (imagePath, category) => {
-  // If no image path is provided, use the default for the category
   if (!imagePath) {
     return defaultImages[category] || generalFallbackImage;
   }
 
-  // Handle relative paths that might be missing the leading slash
   if (!imagePath.startsWith('http') && !imagePath.startsWith('/')) {
     return `/images/${imagePath}`;
   }
@@ -47,7 +45,6 @@ const Menu = () => {
   const { category } = useParams();
 
   const allItems = [
-    // Starters
     { id: 101, name: "Soups", category: "starters", price: "$12", description: "Warm, flavorful broths with vegetables, meat, or noodles.", image: "soups.jpg" },
     { id: 102, name: "Salad", category: "starters", price: "$10", description: "Fresh, crunchy mix of vegetables, fruits, or proteins.", image: "salad.jpg" },
     { id: 103, name: "Chicken Wings", category: "starters", price: "$14", description: "Spicy chicken wings with our special sauce", image: "chicken-wings.jpg" },
@@ -61,19 +58,16 @@ const Menu = () => {
     { id: 204, name: "Chicken Biryani", category: "rice-breads", price: "$5", description: "Aromatic basmati rice layered with spiced chicken.", image: "biryani.jpg" },
     { id: 205, name: "Tomato Rice", category: "rice-breads", price: "$5", description: "Spiced rice cooked with tangy tomatoes.", image: "tomato-rice.jpg" },
 
-    // Desserts
     { id: 301, name: "Gulab Jamun", category: "desserts", price: "$8", description: "Sweet milk dumplings soaked in sugar syrup", image: "gulab.jpg" },
     { id: 302, name: "Chocolate Brownie", category: "desserts", price: "$10", description: "Warm chocolate brownie with vanilla ice cream", image: "brownie.jpg" },
     { id: 303, name: "Rasmalai Cheesecake", category: "desserts", price: "$33", description: "Fusion of Indian rasmalai with cheesecake", image: "cake.jpg" },
     { id: 304, name: "Ice Cream", category: "desserts", price: "$8", description: "Sweet chilled dessert", image: "icecream.jpg" },
 
-    // Beverages
     { id: 401, name: "Mango Mastani", category: "beverages", price: "$32", description: "Thick mango milkshake with ice cream and dry fruits", image: "milkshake.jpg" },
     { id: 402, name: "Fresh Lime Soda", category: "beverages", price: "$6", description: "Refreshing lime soda, sweet or salty", image: "fresh-lime.jpg" },
     { id: 403, name: "Masala Chai", category: "beverages", price: "$5", description: "Traditional Indian spiced tea", image: "chai.jpg" },
     { id: 404, name: "Cappuccino", category: "beverages", price: "$5", description: "Rich espresso-based coffee with steamed milk", image: "cappuccino.jpg" },
 
-    // Main Course
     { id: 501, name: "Butter Chicken", category: "main-course", price: "$18", description: "Chicken in rich tomato and butter gravy", image: "meals.jpg" },
     { id: 502, name: "Hyderabadi Biryani", category: "main-course", price: "$20", description: "Fragrant rice with marinated meat", image: "biryani.jpg" },
     { id: 503, name: "Grilled Peri-Peri Chicken", category: "main-course", price: "$22", description: "Spicy and smoky grilled chicken", image: "chicken.jpg" },
@@ -81,7 +75,6 @@ const Menu = () => {
     { id: 505, name: "Salmon en Papillote", category: "main-course", price: "$35", description: "Baked salmon wrapped in parchment paper", image: "salmon.jpg" },
   ];
   
-  // Signature Dishes
   const signatureDishes = [
     { id: 7, name: "Hyderabadi Biryani", description: "Fragrant rice with marinated meat, slow-cooked in dum style.", price: "$20", image: "/images/biryani.jpg", category: "main-course" },
     { id: 8, name: "Grilled Peri-Peri Chicken", description: "Spicy and smoky grilled chicken.", price: "$22", image: "/images/chicken.jpg", category: "main-course" },
@@ -130,21 +123,17 @@ const Menu = () => {
           console.error("❌ Error fetching categories, extracting from menu items:", err);
         }
   
-        // If categories list is empty, extract categories from menu items
         if (categoriesList.length === 0 && formattedMenuItems.length > 0) {
           categoriesList = [...new Set(formattedMenuItems.map((item) => item.category?.trim().toLowerCase()).filter(Boolean))];
         }
   
-        // If still no categories, fallback to default categories
         if (categoriesList.length === 0) {
           console.warn("⚠️ No categories found, using static fallback.");
           categoriesList = ["starters", "rice-breads", "main-course", "desserts", "beverages", "combo-meals"];
         }
   
-        // Set the categories after ensuring proper fallback or extraction
         setCategories(categoriesList);
   
-        // If a category is provided, call the view handler
         if (category) {
           handleViewCategory(category);
         }
@@ -185,21 +174,17 @@ const Menu = () => {
       const normalizedCategory = category.trim().toLowerCase();
       console.log(`🔍 Fetching category: ${normalizedCategory}`);
 
-      // Start with an empty array for items to show
       let itemsToShow = [];
 
-      // First try to filter from already loaded menuItems (API items)
       const apiItems = menuItems.filter(
         item => item.category?.trim().toLowerCase() === normalizedCategory
       );
       
-      // Add API items to our collection
       if (apiItems.length > 0) {
         itemsToShow = [...apiItems];
         console.log(`✅ Found ${apiItems.length} API items for category '${normalizedCategory}'`);
       }
 
-      // If few or no items found, try to fetch more from API
       if (apiItems.length < 3) {
         try {
           const response = await MenuService.getItemsByCategory(normalizedCategory);
@@ -208,7 +193,6 @@ const Menu = () => {
           if (Array.isArray(response) && response.length > 0) {
             const newApiItems = response
               .filter(apiItem => {
-                // Filter out items we already have (avoid duplicates)
                 return !itemsToShow.some(existing => 
                   existing.id === apiItem._id || existing._id === apiItem._id || 
                   existing.name.toLowerCase() === apiItem.name.toLowerCase()
@@ -251,7 +235,6 @@ const Menu = () => {
       setCategoryItems(itemsToShow);
     } catch (error) {
       console.error(`❌ Error in handleViewCategory for '${category}':`, error);
-      // Try to use static data as fallback
       const staticItems = allItems.filter(
         item => item.category?.trim().toLowerCase() === category.trim().toLowerCase()
       );
@@ -262,10 +245,8 @@ const Menu = () => {
   };
 
   const handleOrderNow = (dishId, processedImageUrl) => {
-    // First check in API menu items
     let item = menuItems.find(item => item.id === dishId || item._id === dishId);
     
-    // If not found, check in static items
     if (!item) {
       item = [...allItems, ...signatureDishes].find(item => item.id === dishId);
     }
@@ -416,7 +397,6 @@ const Menu = () => {
     );
   }
 
-  // Show Reservation Component
   if (showReservation) {
     return (
       <Reservation
@@ -432,7 +412,6 @@ const Menu = () => {
   }
   
 
-  // Display Cart
   if (showCart) {
     return (
       <div className="menu-container">
@@ -541,7 +520,6 @@ const Menu = () => {
     );
   }
 
-  // Selected category view
   if (selectedCategory) {
     return (
       <div className="menu-container">
@@ -581,7 +559,6 @@ const Menu = () => {
                     if (defaultImg && e.target.src !== defaultImg) {
                       e.target.src = defaultImg;
                     } else {
-                      // If category default fails or is the same as the failed image, use general fallback
                       e.target.src = generalFallbackImage;
                     }
                     e.target.onerror = null;
@@ -606,10 +583,8 @@ const Menu = () => {
     );
   }
 
-  // Main menu view
   return (
     <div className="menu-container">
-      {/* Cover Image Section - Replaced video with static image */}
       <div className="cover-image-container">
         <img 
           className="cover-image" 
