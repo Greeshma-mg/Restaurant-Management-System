@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Payment = require("../models/Payment");
 
-// Process a new payment
 const processPayment = async (req, res) => {
     try {
         const { user, order, amount, paymentMethod, transactionId } = req.body;
@@ -26,7 +25,6 @@ const processPayment = async (req, res) => {
     }
 };
 
-// Get all payments
 const getPayments = async (req, res) => {
     try {
         const payments = await Payment.find().populate("user").populate("order");
@@ -36,7 +34,6 @@ const getPayments = async (req, res) => {
     }
 };
 
-// Update a payment by ID
 const updatePayment = async (req, res) => {
     try {
         const { id } = req.params;
@@ -52,7 +49,6 @@ const updatePayment = async (req, res) => {
     }
 };
 
-// Delete a payment by ID
 const deletePayment = async (req, res) => {
     try {
         const { id } = req.params;

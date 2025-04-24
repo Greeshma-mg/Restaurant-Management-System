@@ -17,12 +17,11 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ✅ Fix: Prevent Double Hashing
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   try {
-    if (!this.password.startsWith("$2a$")) { // Only hash if not already hashed
+    if (!this.password.startsWith("$2a$")) { 
       this.password = await bcrypt.hash(this.password, 10);
       console.log("✅ Password hashed successfully");
     }
@@ -33,7 +32,6 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-// ✅ Debugging for Password Matching
 userSchema.methods.matchPassword = async function (enteredPassword) {
   console.log("🔍 Entered Password:", enteredPassword);
   console.log("🔐 Stored Hashed Password:", this.password);

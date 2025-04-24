@@ -129,7 +129,6 @@ const updateMenuItem = async (req, res) => {
   }
 };
 
-// ✅ Delete a menu item
 const deleteMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
