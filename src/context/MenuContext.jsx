@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { MenuService } from "../utils/api"; // Import the service, not the API instance
+import { MenuService } from "../utils/api";
 
 const MenuContext = createContext(null);
 
@@ -56,17 +56,7 @@ export function MenuProvider({ children }) {
 
   const addMenuItem = async (formData) => {
     try {
-      const formDataObj = new FormData();
-
-      Object.keys(formData).forEach(key => {
-        if (key === "image" && formData[key] instanceof File) {
-          formDataObj.append("image", formData[key]);
-        } else {
-          formDataObj.append(key, formData[key]);
-        }
-      });
-
-      await MenuService.createMenu(formDataObj);
+      await MenuService.createMenu(formData); // ✅ Directly use formData
       await fetchMenuItems();
       return true;
     } catch (error) {
@@ -77,17 +67,7 @@ export function MenuProvider({ children }) {
 
   const updateMenuItem = async (id, formData) => {
     try {
-      const formDataObj = new FormData();
-
-      Object.keys(formData).forEach(key => {
-        if (key === "image" && formData[key] instanceof File) {
-          formDataObj.append("image", formData[key]);
-        } else {
-          formDataObj.append(key, formData[key]);
-        }
-      });
-
-      await MenuService.updateMenu(id, formDataObj);
+      await MenuService.updateMenu(id, formData); // ✅ Directly use formData
       await fetchMenuItems();
       return true;
     } catch (error) {
@@ -124,4 +104,3 @@ export function MenuProvider({ children }) {
     </MenuContext.Provider>
   );
 }
-
