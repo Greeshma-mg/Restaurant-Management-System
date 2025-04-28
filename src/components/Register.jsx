@@ -25,7 +25,13 @@ const Register = () => {
     e.preventDefault();
     try {
       setError("");
-      const res = await axios.post("/api/users/register", formData);
+
+      // Corrected API URL here 👇
+      const res = await axios.post(
+        "https://restaurant-management-system-e4ms.onrender.com/api/users/register",
+        formData
+      );
+
       console.log("✅ Registered successfully:", res.data);
       navigate("/login"); // Redirect to login page after successful registration
     } catch (err) {
@@ -75,11 +81,6 @@ const Register = () => {
         >
           <option value="customer">Customer</option>
           <option value="admin">Admin</option>
-          <option value="manager">Manager</option>
-          <option value="chef">Chef</option>
-          <option value="waiter">Waiter</option>
-          <option value="cashier">Cashier</option>
-          <option value="supplier">Supplier</option>
         </select>
 
         <button type="submit">Register</button>
