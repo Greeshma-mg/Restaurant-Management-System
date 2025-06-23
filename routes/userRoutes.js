@@ -8,22 +8,22 @@ const {
   checkAdmin,
   updateUser,
   deleteUser,
-  getUsers, 
+  getUsers,
+  googleLoginUser, 
 } = require("../controllers/userController");
 
 const { protect, isAdmin } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 
+router.post("/google-login", googleLoginUser); 
 
 router.get("/profile", protect, getProfile);
 router.get("/admin", protect, isAdmin, checkAdmin);
-
 
 router.get("/", protect, isAdmin, getUsers); 
 router.put("/:id", protect, updateUser);

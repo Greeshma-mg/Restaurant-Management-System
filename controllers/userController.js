@@ -1,13 +1,13 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-
-// ✅ Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
-};
-
-// ✅ Register User
 const bcrypt = require("bcryptjs");
+const { OAuth2Client } = require("google-auth-library");
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: "30d" });
+};
 
 exports.registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -21,8 +21,8 @@ exports.registerUser = async (req, res) => {
     const user = await User.create({
       name,
       email,
-      password: hashedPassword, 
-      role
+      password: hashedPassword,
+      role,
     });
 
     res.status(201).json({
@@ -30,14 +30,12 @@ exports.registerUser = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user.id),
+      token: generateToken(user.id, user.role),
     });
   } catch (error) {
     res.status(500).json({ message: error.message || "Server error" });
   }
 };
-
-
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -61,13 +59,13 @@ exports.loginUser = async (req, res) => {
     }
 
     console.log("✅ User logged in:", user.email);
-    
+
     res.json({
       _id: user.id,
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user.id),
+      token: generateToken(user.id, user.role),
     });
   } catch (error) {
     console.error("🔥 Login Error:", error);
@@ -75,13 +73,11 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// ✅ Logout User
 exports.logoutUser = (req, res) => {
   res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
   res.json({ message: "Logged out successfully" });
 };
 
-// ✅ Get User Profile
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -92,12 +88,10 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// ✅ Check Admin Access
 exports.checkAdmin = async (req, res) => {
   res.json({ message: "Admin Access Granted" });
 };
 
-// ✅ Get All Users
 exports.getUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -107,13 +101,11 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// ✅ Update User
 exports.updateUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Prevent duplicate emails
     if (req.body.email && req.body.email !== user.email) {
       const existingUser = await User.findOne({ email: req.body.email });
       if (existingUser) return res.status(400).json({ message: "Email already in use" });
@@ -130,14 +122,13 @@ exports.updateUser = async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       role: updatedUser.role,
-      token: generateToken(updatedUser.id),
+      token: generateToken(updatedUser.id, updatedUser.role),
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// ✅ Delete User
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -145,5 +136,53 @@ exports.deleteUser = async (req, res) => {
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.googleLoginUser = async (req, res) => {
+  try {
+    const { id_token } = req.body;
+    if (!id_token) {
+      return res.status(400).json({ message: "No ID token provided" });
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken: id_token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, sub: googleId } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        googleId,
+        role: "customer",
+        password: null, 
+      });
+      await user.save();
+    } else {
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
+    }
+
+    const token = generateToken(user._id, user.role);
+
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token,
+    });
+  } catch (error) {
+    console.error("Google login error:", error);
+    res.status(500).json({ message: "Google login failed" });
   }
 };
