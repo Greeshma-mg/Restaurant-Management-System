@@ -23,6 +23,7 @@ import AdminHome from "./components/AdminHome";
 import EditMenu from "./components/EditMenu";
 import Reviews from "./components/Reviews";
 import ManageReservations from "./components/ManageReservations";
+import jwtDecode from "jwt-decode"; 
 
 function App() {
   const [user, setUser] = useState(null);

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
-import jwt_decode from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 import "../assets/login.css";
 import googleLogo from "/images/google.png"; 
 
@@ -52,7 +52,7 @@ const Login = () => {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const credential = credentialResponse.credential;
-      const decoded = jwt_decode(credential); 
+const decoded = jwtDecode(credential);
 
       
       const backendURL = import.meta.env.VITE_API_URL;
