@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { MenuProvider } from "./context/MenuContext";
+import { GoogleOAuthProvider } from "@react-oauth/google"; // ✅ Import this
 import CustomerNavbar from "./components/CustomerNavbar";
 import AdminNavbar from "./components/AdminNavbar";
 import Login from "./pages/Login";
@@ -33,10 +34,10 @@ function App() {
 
     if (token && storedUser) {
       try {
-        setUser(JSON.parse(storedUser)); 
+        setUser(JSON.parse(storedUser));
       } catch (error) {
         console.error("Error parsing user data:", error);
-        localStorage.removeItem("user"); 
+        localStorage.removeItem("user");
       }
     }
     setIsLoading(false);
@@ -53,112 +54,77 @@ function App() {
   }
 
   return (
-    <MenuProvider>
-      <>
-        {!isLoading && (
-          <>
-            {user ? (
-              user.role === "admin" ? (
-                <AdminNavbar onLogout={handleLogout} />
-              ) : (
-                <CustomerNavbar onLogout={handleLogout} />
-              )
+    // ✅ Wrap everything inside GoogleOAuthProvider
+    <GoogleOAuthProvider clientId="31484129991-0nnvrttecgsctvmr831vk4j6pu1nl4ie.apps.googleusercontent.com">
+      <MenuProvider>
+        <>
+          {user ? (
+            user.role === "admin" ? (
+              <AdminNavbar onLogout={handleLogout} />
             ) : (
-              <nav className="navbar">
-                <h1 className="logo">RestaurantPro</h1>
-                <ul className="nav-links">
-                  <li><a href="/">Home</a></li>
-                  <li><a href="/login" className="login-btn">Login</a></li>
-                </ul>
-              </nav>
-            )}
-          </>
-        )}
+              <CustomerNavbar onLogout={handleLogout} />
+            )
+          ) : (
+            <nav className="navbar">
+              <h1 className="logo">RestaurantPro</h1>
+              <ul className="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/login" className="login-btn">Login</a></li>
+              </ul>
+            </nav>
+          )}
 
-        <Routes>
-          <Route path="/login" element={<Login setUser={setUser} />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/payment" element={<Payment />} />
+          <Routes>
+            <Route path="/login" element={<Login setUser={setUser} />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/payment" element={<Payment />} />
 
-          <Route
-            path="/"
-            element={
-              user ? (
-                user.role === "admin" ? (
-                  <Navigate to="/admin/dashboard" replace />
+            <Route
+              path="/"
+              element={
+                user ? (
+                  user.role === "admin" ? (
+                    <Navigate to="/admin/dashboard" replace />
+                  ) : (
+                    <Home />
+                  )
                 ) : (
                   <Home />
                 )
-              ) : (
-                <Home />
-              )
-            }
-          />
+              }
+            />
 
-          <Route
-  path="/dashboard"
-  element={<ProtectedRoute allowedRoles={["customer", "manager"]}><Home /></ProtectedRoute>}
-/>
-<Route
-  path="/order-type"
-  element={<ProtectedRoute allowedRoles={["customer", "manager"]}><OrderTypeSelection /></ProtectedRoute>}
-/>
-<Route
-  path="/reservations"
-  element={<ProtectedRoute allowedRoles={["customer", "manager"]}><Reservations /></ProtectedRoute>}
-/>
-<Route
-  path="/orders"
-  element={<ProtectedRoute allowedRoles={["customer", "manager"]}><Orders /></ProtectedRoute>}
-/>
+            {/* Customer routes */}
+            <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["customer", "manager"]}><Home /></ProtectedRoute>} />
+            <Route path="/order-type" element={<ProtectedRoute allowedRoles={["customer", "manager"]}><OrderTypeSelection /></ProtectedRoute>} />
+            <Route path="/reservations" element={<ProtectedRoute allowedRoles={["customer", "manager"]}><Reservations /></ProtectedRoute>} />
+            <Route path="/orders" element={<ProtectedRoute allowedRoles={["customer", "manager"]}><Orders /></ProtectedRoute>} />
 
+            {/* Admin routes */}
+            <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={["admin"]}><AdminHome /></ProtectedRoute>} />
+            <Route path="/admin/manage-orders" element={<ProtectedRoute allowedRoles={["admin"]}><ManageOrders /></ProtectedRoute>} />
+            <Route path="/admin/manage-reservations" element={<ProtectedRoute allowedRoles={["admin"]}><ManageReservations /></ProtectedRoute>} />
+            <Route path="/admin/menu-editor" element={<ProtectedRoute allowedRoles={["admin"]}><EditMenu /></ProtectedRoute>} />
+            <Route path="/admin/reviews" element={<ProtectedRoute allowedRoles={["admin"]}><Reviews /></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><Analytics /></ProtectedRoute>} />
+            <Route path="/admin/profile" element={<ProtectedRoute allowedRoles={["admin"]}><AdminProfile /></ProtectedRoute>} />
+            <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettings /></ProtectedRoute>} />
 
-          <Route
-            path="/admin/dashboard"
-            element={<ProtectedRoute allowedRoles={["admin"]}><AdminHome /></ProtectedRoute>}
-          />
-          <Route
-            path="/admin/manage-orders"
-            element={<ProtectedRoute allowedRoles={["admin"]}><ManageOrders /></ProtectedRoute>}
-          />
-          <Route
-            path="/admin/manage-reservations"
-            element={<ProtectedRoute allowedRoles={["admin"]}><ManageReservations /></ProtectedRoute>}
-          />
-          <Route
-            path="/admin/menu-editor"
-            element={<ProtectedRoute allowedRoles={["admin"]}><EditMenu /></ProtectedRoute>}
-          />
-          <Route
-            path="/admin/reviews"
-            element={<ProtectedRoute allowedRoles={["admin"]}><Reviews /></ProtectedRoute>}
-          />
-          <Route
-            path="/admin/analytics"
-            element={<ProtectedRoute allowedRoles={["admin"]}><Analytics /></ProtectedRoute>}
-          />
-          <Route
-            path="/admin/profile"
-            element={<ProtectedRoute allowedRoles={["admin"]}><AdminProfile /></ProtectedRoute>}
-          />
-          <Route
-            path="/admin/settings"
-            element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettings /></ProtectedRoute>}
-          />
-
-          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="/manage-orders" element={<Navigate to="/admin/manage-orders" replace />} />
-          <Route path="/manage-reservations" element={<Navigate to="/admin/manage-reservations" replace />} />
-          <Route path="/menu-editor" element={<Navigate to="/admin/menu-editor" replace />} />
-          <Route path="/reviews" element={<Navigate to="/admin/reviews" replace />} />
-          <Route path="/analytics" element={<Navigate to="/admin/analytics" replace />} />
-          <Route path="/AdminSettings" element={<Navigate to="/admin/settings" replace />} />
-          <Route path="/AdminProfile" element={<Navigate to="/admin/profile" replace />} />
-        </Routes>
-      </>
-    </MenuProvider>
+            {/* Redirect shortcuts */}
+            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="/manage-orders" element={<Navigate to="/admin/manage-orders" replace />} />
+            <Route path="/manage-reservations" element={<Navigate to="/admin/manage-reservations" replace />} />
+            <Route path="/menu-editor" element={<Navigate to="/admin/menu-editor" replace />} />
+            <Route path="/reviews" element={<Navigate to="/admin/reviews" replace />} />
+            <Route path="/analytics" element={<Navigate to="/admin/analytics" replace />} />
+            <Route path="/AdminSettings" element={<Navigate to="/admin/settings" replace />} />
+            <Route path="/AdminProfile" element={<Navigate to="/admin/profile" replace />} />
+          </Routes>
+        </>
+      </MenuProvider>
+    </GoogleOAuthProvider>
   );
 }
 

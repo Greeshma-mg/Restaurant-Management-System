@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import jwt_decode from "jwt-decode"; 
 import "../assets/login.css";
-import googleLogo from "/images/google.png";
+import googleLogo from "/images/google.png"; 
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,65 +24,60 @@ const Login = () => {
     }
   }, []);
 
-  const handleGoogleSignIn = async () => {
-    try {
-      const userData = {
-        id: "google123",
-        name: "Google User",
-        email: "google@example.com",
-        role: "customer",
-      };
-
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", "mock-google-token");
-      navigate("/dashboard");
-    } catch (error) {
-      setError("Google sign-in failed");
-    }
-  };
-
   const handleEmailPasswordSignIn = async (e) => {
     e.preventDefault();
-
     if (!email || !password) {
       setError("Email and password are required");
       return;
     }
 
-    const backendURL = import.meta.env.VITE_API_URL;
-
     try {
+      const backendURL = import.meta.env.VITE_API_URL;
       const res = await axios.post(
         `${backendURL}/users/login`,
         { email, password },
-        {
-          withCredentials: true, 
-        }
+        { withCredentials: true }
       );
 
       const { token, ...userData } = res.data;
-
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
-
       const redirectPath = userData.role === "admin" ? "/admin/dashboard" : "/dashboard";
       navigate(redirectPath);
     } catch (error) {
       setError(error.response?.data?.message || "Login failed");
-      console.error("Login Error:", error.response?.data || error.message);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const credential = credentialResponse.credential;
+      const decoded = jwt_decode(credential); 
+
+      
+      const backendURL = import.meta.env.VITE_API_URL;
+      const res = await axios.post(`${backendURL}/users/google-login`, { id_token: credential }, { withCredentials: true });
+
+      const { token, ...userData } = res.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      const redirectPath = userData.role === "admin" ? "/admin/dashboard" : "/dashboard";
+      navigate(redirectPath);
+    } catch (error) {
+      setError(error.response?.data?.message || "Google sign-in failed");
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError("Google sign-in failed. Please try again.");
   };
 
   return (
     <div className="login-container">
-      <div
-        className="background-image"
-        style={{ backgroundImage: "url('/images/login.jpg')" }}
-      >
+      <div className="background-image" style={{ backgroundImage: "url('/images/login.jpg')" }}>
         <div className="overlay">
           <div className="login-box">
             <h1 className="brand">Savory Elegance</h1>
-
             {error && <div className="error-message">{error}</div>}
 
             <form className="login-form" onSubmit={handleEmailPasswordSignIn}>
@@ -127,10 +124,14 @@ const Login = () => {
 
             <div className="divider">OR</div>
 
-            <button type="button" className="google-btn" onClick={handleGoogleSignIn}>
-              <img src={googleLogo} alt="Google Logo" className="google-logo" />
-              Continue with Google
-            </button>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              size="large"
+              text="continue_with"
+              shape="pill"
+            />
+
           </div>
         </div>
       </div>
